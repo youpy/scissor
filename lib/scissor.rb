@@ -105,7 +105,7 @@ class Scissor
     end
 
     # concat mp3 files
-    cmd = "mp3wrap #{filename} #{outfiles.join(' ')}"
+    cmd = "mp3wrap \"#{filename}\" #{outfiles.join(' ')}"
     system cmd
 
     # fix duration and rename
