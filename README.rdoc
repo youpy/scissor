@@ -18,16 +18,16 @@ utility to chop mp3 files
 == Synopsis
 
 	 foo = Scissor.new('foo.mp3')
-	 var = Scissor.new('bar.mp3')
+	 bar = Scissor.new('bar.mp3')
 
 	 # concat
 	 (foo + bar).to_file('foobar.mp3')
 
 	 # slice + concat
-	 (foo.slice(10, 1) + bar.slice(2,3)).to_file('slicefoobar.mp3')
+	 (foo.slice(10, 1) + bar.slice(2, 3)).to_file('slicefoobar.mp3')
 
 	 # slice + concat + loop
-	 ((foo.slice(10, 1) + bar.slice(2,3)) * 3).to_file('slicefoobarloop.mp3')
+	 ((foo.slice(10, 1) + bar.slice(2, 3)) * 3).to_file('slicefoobarloop.mp3')
 
 == Copyright
 
