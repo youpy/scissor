@@ -100,7 +100,7 @@ class Scissor
     @fragments.each_with_index do |fragment, index|
       outfile = tmpdir + '/' + index.to_s + '.mp3'
       outfiles << outfile
-      cmd = "ffmpeg -i #{fragment.filename} -ss #{fragment.start} -t #{fragment.duration} #{outfile}"
+      cmd = "ffmpeg -i \"#{fragment.filename}\" -ss #{fragment.start} -t #{fragment.duration} #{outfile}"
       system cmd
     end
 
@@ -109,7 +109,7 @@ class Scissor
     system cmd
 
     # fix duration and rename
-    cmd = "ffmpeg -i #{filename.sub(/\.mp3$/, '_MP3WRAP.mp3')} -acodec copy #{filename}"
+    cmd = "ffmpeg -i \"#{filename.sub(/\.mp3$/, '_MP3WRAP.mp3')}\" -acodec copy \"#{filename}\""
     system cmd
 
     rm_rf tmpdir
