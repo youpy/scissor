@@ -96,7 +96,7 @@ class Scissor
     results = []
 
     count.times do |i|
-      results << slice(i, splitted_duration)
+      results << slice(i * splitted_duration, splitted_duration)
     end
 
     results
