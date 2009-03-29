@@ -130,7 +130,6 @@ class Scissor
       outfile = tmpdir + '/' + index.to_s + '.mp3'
       outfiles << outfile
       cmd = "ffmpeg -i \"#{fragment.filename}\" -ss #{fragment.start} -t #{fragment.duration} #{outfile}"
-      puts cmd
       system cmd
     end
 
@@ -140,13 +139,11 @@ class Scissor
       # concat mp3 files
       outfile = tmpdir + '/concat.mp3'
       cmd = "mp3wrap \"#{outfile}\" #{outfiles.join(' ')}"
-      puts cmd
       system cmd
 
       # fix duration and rename
       infile = tmpdir + '/concat_MP3WRAP.mp3'
       cmd = "ffmpeg -i \"#{infile}\" -acodec copy \"#{filename}\""
-      puts cmd
       system cmd
     end
 
