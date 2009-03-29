@@ -51,4 +51,33 @@ describe Scissor do
     File.exist?(file).should be_true
     Scissor.new(file.path).duration.to_i.should eql(140)
   end
+
+  it "should overwrite existing file" do
+    file = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    Scissor.new(file.path).duration.to_i.should eql(10)
+
+    file = @mp3.slice(0, 12).to_file('/tmp/scissor-test/out.mp3',
+      :overwrite => true)
+    Scissor.new(file.path).duration.to_i.should eql(12)
+  end
+
+  it "should raise error if overwrite option is false" do
+    file = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    Scissor.new(file.path).duration.to_i.should eql(10)
+
+    lambda {
+      @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
+        :overwrite => false)
+    }.should raise_error(Scissor::FileExists)
+
+    lambda {
+      @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    }.should raise_error(Scissor::FileExists)
+  end
+
+  it "should raise error if no fragment are given" do
+    lambda {
+      Scissor.new.to_file('/tmp/scissor-test/out.mp3')
+    }.should raise_error(Scissor::EmptyFragment)
+  end
 end

@@ -6,6 +6,8 @@ include FileUtils
 class Scissor
   class Error < StandardError; end
   class CommandNotFound < Error; end
+  class FileExists < Error; end
+  class EmptyFragment < Error; end
 
   attr_reader :fragments
 
@@ -99,9 +101,25 @@ class Scissor
     results
   end
 
-  def to_file(filename)
+  def to_file(filename, options = {})
+    if @fragments.empty?
+      raise EmptyFragment
+    end
+
     which('ffmpeg')
     which('mp3wrap')
+
+    options = {
+      :overwrite => false
+    }.merge(options)
+
+    if File.exists?(filename)
+      if options[:overwrite]
+        File.unlink(filename)
+      else
+        raise FileExists
+      end
+    end
 
     outfiles = []
     tmpdir = '/tmp/scissor-' + $$.to_s
@@ -112,16 +130,25 @@ class Scissor
       outfile = tmpdir + '/' + index.to_s + '.mp3'
       outfiles << outfile
       cmd = "ffmpeg -i \"#{fragment.filename}\" -ss #{fragment.start} -t #{fragment.duration} #{outfile}"
+      puts cmd
       system cmd
     end
 
-    # concat mp3 files
-    cmd = "mp3wrap \"#{filename}\" #{outfiles.join(' ')}"
-    system cmd
+    if outfiles.size == 1
+      mv outfiles.first, filename
+    else
+      # concat mp3 files
+      outfile = tmpdir + '/concat.mp3'
+      cmd = "mp3wrap \"#{outfile}\" #{outfiles.join(' ')}"
+      puts cmd
+      system cmd
 
-    # fix duration and rename
-    cmd = "ffmpeg -i \"#{filename.sub(/\.mp3$/, '_MP3WRAP.mp3')}\" -acodec copy \"#{filename}\""
-    system cmd
+      # fix duration and rename
+      infile = tmpdir + '/concat_MP3WRAP.mp3'
+      cmd = "ffmpeg -i \"#{infile}\" -acodec copy \"#{filename}\""
+      puts cmd
+      system cmd
+    end
 
     rm_rf tmpdir
 
