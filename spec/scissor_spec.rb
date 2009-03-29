@@ -36,6 +36,14 @@ describe Scissor do
     new_mp3.duration.should eql(30)
   end
 
+  it "should split" do
+    splits = @mp3.slice(0, 10) / 10
+    splits.length.should eql(10)
+    splits.each do |split|
+      split.duration.to_i.should eql(1)
+    end
+  end
+
   it "should write to file" do
     new_mp3 = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     file = new_mp3.to_file('/tmp/scissor-test/out.mp3')

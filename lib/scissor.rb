@@ -91,6 +91,17 @@ class Scissor
     self
   end
 
+  def /(count)
+    splitted_duration = duration / count.to_f
+    results = []
+
+    count.times do |i|
+      results << slice(i, splitted_duration)
+    end
+
+    results
+  end
+
   def to_file(filename)
     outfiles = []
     tmpdir = '/tmp/scissor-' + $$.to_s

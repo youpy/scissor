@@ -27,7 +27,10 @@ utility to chop mp3 files
 	 (foo.slice(10, 1) + bar.slice(2, 3)).to_file('slicefoobar.mp3')
 
 	 # slice + concat + loop
-	 ((foo.slice(10, 1) + bar.slice(2, 3)) * 3).to_file('slicefoobarloop.mp3')
+	 ((foo.slice(10, 1) + bar.slice(2, 3)) * 4).to_file('slicefoobarloop.mp3')
+
+	 # split
+	 (Scissor.new('sequence.mp3') / 16).to_file('split.mp3')
 
 == Copyright
 

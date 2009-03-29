@@ -1,17 +1,17 @@
 Gem::Specification.new do |s|
   s.name = %q{scissor}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["youpy"]
-  s.date = %q{2009-03-29}
+  s.date = %q{2009-03-30}
   s.description = %q{utility to chop mp3 files}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
-  s.extra_rdoc_files = ["README", "ChangeLog"]
-  s.files = ["README", "ChangeLog", "Rakefile", "lib/scissor.rb"]
+  s.extra_rdoc_files = ["README.rdoc", "ChangeLog"]
+  s.files = ["README.rdoc", "ChangeLog", "Rakefile", "lib/scissor.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://scissor.rubyforge.org}
-  s.rdoc_options = ["--title", "scissor documentation", "--charset", "utf-8", "--opname", "index.html", "--line-numbers", "--main", "README", "--inline-source", "--exclude", "^(examples|extras)/"]
+  s.rdoc_options = ["--title", "scissor documentation", "--charset", "utf-8", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source", "--exclude", "^(examples|extras)/"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{scissor}
   s.rubygems_version = %q{1.2.0}
