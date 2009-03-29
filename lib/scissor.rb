@@ -149,7 +149,7 @@ class Scissor
 
     rm_rf tmpdir
 
-    open(filename)
+    self.class.new(filename)
   end
 
   class Fragment

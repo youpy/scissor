@@ -44,26 +44,25 @@ describe Scissor do
     end
   end
 
-  it "should write to file" do
+  it "should write to file and return new instance of Scissor" do
     new_mp3 = @mp3.slice(0, 120) + @mp3.slice(150, 20)
-    file = new_mp3.to_file('/tmp/scissor-test/out.mp3')
-    file.should be_an_instance_of(File)
-    File.exist?(file).should be_true
-    Scissor.new(file.path).duration.to_i.should eql(140)
+    result = new_mp3.to_file('/tmp/scissor-test/out.mp3')
+    result.should be_an_instance_of(Scissor)
+    result.duration.to_i.should eql(140)
   end
 
   it "should overwrite existing file" do
-    file = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    Scissor.new(file.path).duration.to_i.should eql(10)
+    result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    result.duration.to_i.should eql(10)
 
-    file = @mp3.slice(0, 12).to_file('/tmp/scissor-test/out.mp3',
+    result = @mp3.slice(0, 12).to_file('/tmp/scissor-test/out.mp3',
       :overwrite => true)
-    Scissor.new(file.path).duration.to_i.should eql(12)
+    result.duration.to_i.should eql(12)
   end
 
   it "should raise error if overwrite option is false" do
-    file = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    Scissor.new(file.path).duration.to_i.should eql(10)
+    result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    result.duration.to_i.should eql(10)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
