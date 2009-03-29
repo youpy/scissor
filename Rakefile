@@ -17,7 +17,7 @@ DESCRIPTION       = "utility to chop mp3 files"
 RUBYFORGE_PROJECT = "scissor"
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
-VERS              = "0.0.2"
+VERS              = "0.0.3"
 
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
