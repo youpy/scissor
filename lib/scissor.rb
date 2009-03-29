@@ -10,9 +10,6 @@ class Scissor
   attr_reader :fragments
 
   def initialize(filename = nil)
-    which('ffmpeg')
-    which('mp3wrap')
-
     @fragments = []
 
     if filename
@@ -103,6 +100,9 @@ class Scissor
   end
 
   def to_file(filename)
+    which('ffmpeg')
+    which('mp3wrap')
+
     outfiles = []
     tmpdir = '/tmp/scissor-' + $$.to_s
     mkdir tmpdir
