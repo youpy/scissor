@@ -26,9 +26,19 @@ describe Scissor do
     @mp3.slice(150, 20).duration.should eql(20)
   end
 
-  it "should paste" do
+  it "should concatenate" do
     new_mp3 = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     new_mp3.duration.should eql(140)
+  end
+
+  it "should slice concatenated one" do
+    new_mp3 = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
+    new_mp3.duration.to_s.should == '0.2'
+    new_mp3.fragments.size.should eql(2)
+    new_mp3.fragments[0].start.to_s.should == '1.23'
+    new_mp3.fragments[0].duration.to_s.should == '0.1'
+    new_mp3.fragments[1].start.to_s.should == '0.2'
+    new_mp3.fragments[1].duration.to_s.should == '0.1'
   end
 
   it "should loop" do
@@ -37,11 +47,17 @@ describe Scissor do
   end
 
   it "should split" do
-    splits = @mp3.slice(0, 10) / 10
-    splits.length.should eql(10)
+    splits = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)) / 5
+    splits.length.should eql(5)
     splits.each do |split|
-      split.duration.to_i.should eql(1)
+      split.duration.to_s.should == '0.22'
     end
+
+    splits[0].fragments.size.should eql(1)
+    splits[1].fragments.size.should eql(1)
+    splits[2].fragments.size.should eql(1)
+    splits[3].fragments.size.should eql(1)
+    splits[4].fragments.size.should eql(2)
   end
 
   it "should write to file and return new instance of Scissor" do

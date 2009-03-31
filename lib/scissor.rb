@@ -43,7 +43,7 @@ class Scissor
         next
       end
 
-      if (start + fragment.duration) >= remain
+      if (start + remain) <= fragment.duration
         new_mp3.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
@@ -51,11 +51,11 @@ class Scissor
 
         break
       else
-        remain = remain - fragment.duration
+        remain = remain - (fragment.duration - start)
         new_mp3.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
-            fragment.duration))
+            fragment.duration - start))
 
         start = 0
       end
