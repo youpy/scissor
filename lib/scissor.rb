@@ -70,7 +70,7 @@ class Scissor
       (raise CommandNotFound.new(command + ' not found'))
   end
 
-  def +(other)
+  def concat(other)
     other.fragments.each do |fragment|
       add_fragment(fragment)
     end
@@ -78,7 +78,9 @@ class Scissor
     self
   end
 
-  def *(count)
+  alias :+ :concat
+
+  def loop(count)
     orig_fragments = @fragments.clone
 
     (count - 1).times do
@@ -90,7 +92,9 @@ class Scissor
     self
   end
 
-  def /(count)
+  alias :* :loop
+
+  def split(count)
     splitted_duration = duration / count.to_f
     results = []
 
@@ -100,6 +104,8 @@ class Scissor
 
     results
   end
+
+  alias :/ :split
 
   def to_file(filename, options = {})
     if @fragments.empty?
