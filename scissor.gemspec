@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = %q{scissor}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["youpy"]
-  s.date = %q{2009-03-30}
+  s.date = %q{2009-03-31}
   s.description = %q{utility to chop mp3 files}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
   s.extra_rdoc_files = ["README.rdoc", "ChangeLog"]
