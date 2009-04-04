@@ -92,6 +92,13 @@ describe Scissor do
     result.duration.to_i.should eql(140)
   end
 
+  it "should write to file with many fragments" do
+    new_mp3 = (@mp3.slice(0, 120) / 100).inject(Scissor.new){|m, s| m + s } + @mp3.slice(10, 20)
+    result = new_mp3.to_file('/tmp/scissor-test/out.mp3')
+    result.should be_an_instance_of(Scissor)
+    result.duration.to_i.should eql(140)
+  end
+
   it "should overwrite existing file" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
     result.duration.to_i.should eql(10)

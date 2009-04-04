@@ -5,6 +5,14 @@ utility to chop mp3 files
 
 == Installation
 
+=== Requirements
+==== Gems
+ * {ruby-mp3info}[http://ruby-mp3info.rubyforge.org/]
+==== External Commands
+ * {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
+ * {Ecasound}[http://www.eca.cx/ecasound/]
+ * {mpg123}[http://www.mpg123.de/]
+
 === Archive Installation
 
 	rake install

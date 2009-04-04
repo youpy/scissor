@@ -6,6 +6,7 @@ include FileUtils
 class Scissor
   class Error < StandardError; end
   class CommandNotFound < Error; end
+  class CommandFailed < Error; end
   class FileExists < Error; end
   class EmptyFragment < Error; end
 
@@ -64,12 +65,6 @@ class Scissor
     new_mp3
   end
 
-  def which(command)
-    result = `which #{command}`
-    $?.exitstatus == 0 ? result.chomp :
-      (raise CommandNotFound.new(command + ' not found'))
-  end
-
   def concat(other)
     other.fragments.each do |fragment|
       add_fragment(fragment)
@@ -112,8 +107,9 @@ class Scissor
       raise EmptyFragment
     end
 
+    which('ecasound')
     which('ffmpeg')
-    which('mp3wrap')
+    which('mpg123')
 
     options = {
       :overwrite => false
@@ -127,35 +123,43 @@ class Scissor
       end
     end
 
-    outfiles = []
-    tmpdir = '/tmp/scissor-' + $$.to_s
-    mkdir tmpdir
+    position = 0.0
+    tmpfile = '/tmp/scissor-' + $$.to_s + '.wav'
+    cmd = %w/ecasound/
 
-    # slice mp3 files
-    @fragments.each_with_index do |fragment, index|
-      outfile = tmpdir + '/' + index.to_s + '.mp3'
-      outfiles << outfile
-      cmd = "ffmpeg -i \"#{fragment.filename}\" -ss #{fragment.start} -t #{fragment.duration} #{outfile}"
-      system cmd
+    begin
+      @fragments.each_with_index do |fragment, index|
+        if !index.zero? && (index % 80).zero?
+          run_command(cmd.join(' '))
+          cmd = %w/ecasound/
+        end
+
+        cmd << "-a:#{index} -i \"#{fragment.filename}\" -y:#{fragment.start} -t:#{fragment.duration} -o #{tmpfile} -y:#{position}"
+        position += fragment.duration
+      end
+
+      run_command(cmd.join(' '))
+
+      cmd = "ffmpeg -i \"#{tmpfile}\" \"#{filename}\""
+      run_command(cmd)
+    ensure
+      rm tmpfile
     end
-
-    if outfiles.size == 1
-      mv outfiles.first, filename
-    else
-      # concat mp3 files
-      outfile = tmpdir + '/concat.mp3'
-      cmd = "mp3wrap \"#{outfile}\" #{outfiles.join(' ')}"
-      system cmd
-
-      # fix duration and rename
-      infile = tmpdir + '/concat_MP3WRAP.mp3'
-      cmd = "ffmpeg -i \"#{infile}\" -acodec copy \"#{filename}\""
-      system cmd
-    end
-
-    rm_rf tmpdir
 
     self.class.new(filename)
+  end
+
+  def which(command)
+    run_command("which #{command}")
+
+    rescue CommandFailed
+    raise CommandNotFound.new("#{command}: not found")
+  end
+
+  def run_command(cmd)
+    unless system(cmd)
+      raise CommandFailed.new(cmd)
+    end
   end
 
   class Fragment
