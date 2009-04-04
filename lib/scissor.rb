@@ -78,7 +78,7 @@ class Scissor
     self
   end
 
-  alias :+ :concat
+  alias + concat
 
   def loop(count)
     orig_fragments = @fragments.clone
@@ -92,7 +92,7 @@ class Scissor
     self
   end
 
-  alias :* :loop
+  alias * loop
 
   def split(count)
     splitted_duration = duration / count.to_f
@@ -105,7 +105,7 @@ class Scissor
     results
   end
 
-  alias :/ :split
+  alias / split
 
   def to_file(filename, options = {})
     if @fragments.empty?
