@@ -3,13 +3,14 @@
 == Description
 utility to chop mp3 files
 
-== Installation
+== Requirements
 
-=== Requirements
 * {ruby-mp3info}[http://ruby-mp3info.rubyforge.org/]
 * {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
 * {Ecasound}[http://www.eca.cx/ecasound/]
 * {mpg123}[http://www.mpg123.de/]
+
+== Installation
 
 === Archive Installation
 
