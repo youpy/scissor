@@ -34,7 +34,7 @@ class Scissor
   end
 
   def slice(start, length)
-    new_mp3 = self.class.new()
+    new_mp3 = self.class.new
     remain = length
 
     @fragments.each do |fragment|
@@ -102,6 +102,28 @@ class Scissor
 
   alias / split
 
+  def fill(filled_duration)
+    if @fragments.empty?
+      raise EmptyFragment
+    end
+
+    remain = filled_duration
+    new_mp3 = self.class.new
+
+    while filled_duration > new_mp3.duration
+      if remain < duration
+        added = slice(0, remain)
+      else
+        added = self
+      end
+
+      new_mp3 += added
+      remain -= added.duration
+    end
+
+    new_mp3
+  end
+
   def to_file(filename, options = {})
     if @fragments.empty?
       raise EmptyFragment
@@ -159,6 +181,12 @@ class Scissor
   def run_command(cmd)
     unless system(cmd)
       raise CommandFailed.new(cmd)
+    end
+  end
+
+  class << self
+    def silence(duration)
+      new(File.dirname(__FILE__) + '/../data/silence.mp3').fill(duration)
     end
   end
 

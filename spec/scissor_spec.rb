@@ -36,6 +36,11 @@ describe Scissor do
     new_mp3.duration.should eql(140)
   end
 
+  it "should concat silence" do
+    new_mp3 = @mp3.slice(0, 12).concat(Scissor.silence(3))
+    new_mp3.duration.to_s.should eql('15.0')
+  end
+
   it "should slice concatenated one" do
     new_mp3 = @mp3.slice(0.33, 1).concat(@mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
 
@@ -83,6 +88,16 @@ describe Scissor do
     splits[2].fragments.size.should eql(1)
     splits[3].fragments.size.should eql(1)
     splits[4].fragments.size.should eql(2)
+  end
+
+  it "should fill" do
+    new_mp3 = (@mp3.slice(0, 6) + @mp3.slice(0, 2)).fill(15)
+    new_mp3.duration.should eql(15)
+    new_mp3.fragments.size.should eql(4)
+    new_mp3.fragments[0].duration.should eql(6)
+    new_mp3.fragments[1].duration.should eql(2)
+    new_mp3.fragments[2].duration.should eql(6)
+    new_mp3.fragments[3].duration.should eql(1)
   end
 
   it "should write to file and return new instance of Scissor" do
