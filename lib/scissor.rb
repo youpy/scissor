@@ -1,7 +1,6 @@
 require 'mp3info'
-require 'fileutils'
-
-include FileUtils
+require 'digest/md5'
+require 'pathname'
 
 class Scissor
   class Error < StandardError; end
@@ -18,7 +17,7 @@ class Scissor
 
     if filename
       @fragments << Fragment.new(
-        filename,
+        Pathname.new(filename),
         0,
         Mp3Info.new(filename).length)
     end
@@ -39,7 +38,7 @@ class Scissor
       raise OutOfDuration
     end
 
-    new_mp3 = self.class.new
+    new_instance = self.class.new
     remain = length
 
     @fragments.each do |fragment|
@@ -50,7 +49,7 @@ class Scissor
       end
 
       if (start + remain) <= fragment.duration
-        new_mp3.add_fragment(Fragment.new(
+        new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
             remain))
@@ -58,7 +57,7 @@ class Scissor
         break
       else
         remain = remain - (fragment.duration - start)
-        new_mp3.add_fragment(Fragment.new(
+        new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
             fragment.duration - start))
@@ -67,7 +66,7 @@ class Scissor
       end
     end
 
-    new_mp3
+    new_instance
   end
 
   def concat(other)
@@ -113,24 +112,24 @@ class Scissor
     end
 
     remain = filled_duration
-    new_mp3 = self.class.new
+    new_instance = self.class.new
 
-    while filled_duration > new_mp3.duration
+    while filled_duration > new_instance.duration
       if remain < duration
         added = slice(0, remain)
       else
         added = self
       end
 
-      new_mp3 += added
+      new_instance += added
       remain -= added.duration
     end
 
-    new_mp3
+    new_instance
   end
 
   def replace(start, duration, replaced)
-    new_mp3 = self.class.new
+    new_instance = self.class.new
     offset = start + duration
 
     if offset > self.duration
@@ -138,13 +137,13 @@ class Scissor
     end
 
     if start > 0
-      new_mp3 += slice(0, start)
+      new_instance += slice(0, start)
     end
 
-    new_mp3 += replaced
-    new_mp3 += slice(offset, self.duration - offset)
+    new_instance += replaced
+    new_instance += slice(offset, self.duration - offset)
 
-    new_mp3
+    new_instance
   end
 
   def to_file(filename, options = {})
@@ -160,35 +159,44 @@ class Scissor
       :overwrite => false
     }.merge(options)
 
-    if File.exists?(filename)
+    filename = Pathname.new(filename)
+
+    if filename.exist?
       if options[:overwrite]
-        File.unlink(filename)
+        filename.unlink
       else
         raise FileExists
       end
     end
 
     position = 0.0
-    tmpfile = '/tmp/scissor-' + $$.to_s + '.wav'
+    tmpdir = Pathname.new('/tmp/scissor-' + $$.to_s)
+    tmpdir.mkpath
+    tmpfile = tmpdir + 'tmp.wav'
     cmd = %w/ecasound/
 
     begin
       @fragments.each_with_index do |fragment, index|
-        if !index.zero? && (index % 80).zero?
-          run_command(cmd.join(' '))
-          cmd = %w/ecasound/
+        fragment_tmpfile =
+          tmpdir + (Digest::MD5.hexdigest(fragment.filename) + '.wav')
+
+        unless fragment_tmpfile.exist?
+          run_command("ffmpeg -i \"#{fragment.filename}\" \"#{fragment_tmpfile}\"")
         end
 
-        cmd << "-a:#{index} -i \"#{fragment.filename}\" -y:#{fragment.start} -t:#{fragment.duration} -o #{tmpfile} -y:#{position}"
+        cmd <<
+          "-a:#{index} " +
+          "-i:select,#{fragment.start},#{fragment.duration},\"#{fragment_tmpfile}\" " +
+          "-o #{tmpfile} " +
+          "-y:#{position}"
+
         position += fragment.duration
       end
 
       run_command(cmd.join(' '))
-
-      cmd = "ffmpeg -i \"#{tmpfile}\" \"#{filename}\""
-      run_command(cmd)
+      run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
     ensure
-      rm tmpfile
+      tmpdir.rmtree
     end
 
     self.class.new(filename)
