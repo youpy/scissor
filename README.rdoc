@@ -41,6 +41,10 @@ utility to chop mp3 files
 	 # replace first 10 seconds with 30 seconds of silence
 	 foo.replace(0, 10, Scissor.silence(30)).to_file('replace.mp3')
 
+	 # reverse + concat + loop
+	 beat = foo.slice(0, 1)
+	 ((beat * 3) + beat.reverse) * 80
+
 == Copyright
 
 Author:: youpy <youpy@buycheapviagraonlinenow.com>

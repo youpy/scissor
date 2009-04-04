@@ -118,6 +118,30 @@ describe Scissor do
     new_mp3.fragments[2].duration.should eql(10)
   end
 
+  it "should reverse" do
+    new_mp3 = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse
+    new_mp3.duration.should eql(15)
+    new_mp3.fragments.size.should eql(2)
+    new_mp3.fragments[0].start.should eql(0)
+    new_mp3.fragments[0].duration.should eql(5)
+    new_mp3.fragments[0].should be_reversed
+    new_mp3.fragments[1].start.should eql(0)
+    new_mp3.fragments[1].duration.should eql(10)
+    new_mp3.fragments[0].should be_reversed
+  end
+
+  it "should re-reverse" do
+    new_mp3 = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse.reverse
+    new_mp3.duration.should eql(15)
+    new_mp3.fragments.size.should eql(2)
+    new_mp3.fragments[0].start.should eql(0)
+    new_mp3.fragments[0].duration.should eql(10)
+    new_mp3.fragments[0].should_not be_reversed
+    new_mp3.fragments[1].start.should eql(0)
+    new_mp3.fragments[1].duration.should eql(5)
+    new_mp3.fragments[0].should_not be_reversed
+  end
+
   it "should raise error if replaced range is out of duration" do
     lambda {
       @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))

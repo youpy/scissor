@@ -52,7 +52,8 @@ class Scissor
         new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
-            remain))
+            remain,
+            fragment.reversed?))
 
         break
       else
@@ -60,7 +61,8 @@ class Scissor
         new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start + start,
-            fragment.duration - start))
+            fragment.duration - start,
+            fragment.reversed?))
 
         start = 0
       end
@@ -146,6 +148,20 @@ class Scissor
     new_instance
   end
 
+  def reverse
+    new_instance = self.class.new
+
+    @fragments.reverse.each do |fragment|
+      new_instance.add_fragment(Fragment.new(
+          fragment.filename,
+          fragment.start,
+          fragment.duration,
+          !fragment.reversed?))
+    end
+
+    new_instance
+  end
+
   def to_file(filename, options = {})
     if @fragments.empty?
       raise EmptyFragment
@@ -176,6 +192,11 @@ class Scissor
 
     begin
       @fragments.each_with_index do |fragment, index|
+        if !index.zero? && (index % 80).zero?
+          run_command(cmd.join(' '))
+          cmd = %w/ecasound/
+        end
+
         fragment_tmpfile =
           tmpdir + (Digest::MD5.hexdigest(fragment.filename) + '.wav')
 
@@ -185,8 +206,10 @@ class Scissor
 
         cmd <<
           "-a:#{index} " +
-          "-i:select,#{fragment.start},#{fragment.duration},\"#{fragment_tmpfile}\" " +
-          "-o #{tmpfile} " +
+          "-i:" +
+          (fragment.reversed? ? 'reverse,' : '') +
+          "select,#{fragment.start},#{fragment.duration},\"#{fragment_tmpfile}\" " +
+          "-o:#{tmpfile} " +
           "-y:#{position}"
 
         position += fragment.duration
@@ -225,12 +248,17 @@ class Scissor
   class Fragment
     attr_reader :filename, :start, :duration
 
-    def initialize(filename, start, duration)
+    def initialize(filename, start, duration, reverse = false)
       @filename = filename
       @start = start
       @duration = duration
+      @reverse = reverse
 
       freeze
+    end
+
+    def reversed?
+      @reverse
     end
   end
 end
