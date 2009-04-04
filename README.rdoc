@@ -38,6 +38,9 @@ utility to chop mp3 files
 	 # split
 	 (Scissor.new('sequence.mp3') / 16).first.to_file('split.mp3')
 
+	 # replace first 10 seconds with 30 seconds of silence
+	 foo.replace(0, 10, Scissor.silence(30)).to_file('replace.mp3')
+
 == Copyright
 
 Author:: youpy <youpy@buycheapviagraonlinenow.com>

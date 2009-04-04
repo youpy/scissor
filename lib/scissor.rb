@@ -9,6 +9,7 @@ class Scissor
   class CommandFailed < Error; end
   class FileExists < Error; end
   class EmptyFragment < Error; end
+  class OutOfDuration < Error; end
 
   attr_reader :fragments
 
@@ -34,6 +35,10 @@ class Scissor
   end
 
   def slice(start, length)
+    if start + length > duration
+      raise OutOfDuration
+    end
+
     new_mp3 = self.class.new
     remain = length
 
@@ -124,6 +129,24 @@ class Scissor
     new_mp3
   end
 
+  def replace(start, duration, replaced)
+    new_mp3 = self.class.new
+    offset = start + duration
+
+    if offset > self.duration
+      raise OutOfDuration
+    end
+
+    if start > 0
+      new_mp3 += slice(0, start)
+    end
+
+    new_mp3 += replaced
+    new_mp3 += slice(offset, self.duration - offset)
+
+    new_mp3
+  end
+
   def to_file(filename, options = {})
     if @fragments.empty?
       raise EmptyFragment
@@ -186,7 +209,9 @@ class Scissor
 
   class << self
     def silence(duration)
-      new(File.dirname(__FILE__) + '/../data/silence.mp3').fill(duration)
+      new(File.dirname(__FILE__) + '/../data/silence.mp3').
+        slice(0, 1).
+        fill(duration)
     end
   end
 
@@ -197,6 +222,8 @@ class Scissor
       @filename = filename
       @start = start
       @duration = duration
+
+      freeze
     end
   end
 end
