@@ -153,7 +153,6 @@ class Scissor
 
     which('ecasound')
     which('ffmpeg')
-    which('mpg123')
 
     options = {
       :overwrite => false
