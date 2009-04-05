@@ -11,7 +11,7 @@ supported file format:
 
 == Installation
 
-== Requirements
+=== Requirements
 
 * {ruby-mp3info}[http://ruby-mp3info.rubyforge.org/]
 
