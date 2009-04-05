@@ -2,19 +2,23 @@ require 'mp3info'
 require 'digest/md5'
 require 'pathname'
 require 'riff/reader'
+require 'open4'
+require 'logger'
 
 class Scissor
   class Error < StandardError; end
-  class CommandNotFound < Error; end
-  class CommandFailed < Error; end
   class FileExists < Error; end
   class EmptyFragment < Error; end
   class OutOfDuration < Error; end
+  class CommandFailed < Error; end
 
   attr_reader :fragments
+  attr_accessor :logger
 
   def initialize(filename = nil)
     @fragments = []
+    @logger = Logger.new(STDOUT)
+    @logger.level = Logger::INFO
 
     if filename
       @fragments << Fragment.new(
@@ -189,13 +193,13 @@ class Scissor
     tmpdir = Pathname.new('/tmp/scissor-' + $$.to_s)
     tmpdir.mkpath
     tmpfile = tmpdir + 'tmp.wav'
-    cmd = %w/ecasound -q/
+    cmd = %w/ecasound/
 
     begin
       @fragments.each_with_index do |fragment, index|
         if !index.zero? && (index % 80).zero?
           run_command(cmd.join(' '))
-          cmd = %w/ecasound -q/
+          cmd = %w/ecasound/
         end
 
         fragment_tmpfile =
@@ -229,15 +233,22 @@ class Scissor
 
   def which(command)
     run_command("which #{command}")
-
-    rescue CommandFailed
-    raise CommandNotFound.new("#{command}: not found")
   end
 
   def run_command(cmd)
-    unless system(cmd)
+    @logger.debug("run_command: #{cmd}")
+
+    result = ''
+    status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
+      @logger.debug(stderr.read)
+      result = stdout.read
+    end
+
+    if status.exitstatus != 0
       raise CommandFailed.new(cmd)
     end
+
+    return result
   end
 
   class << self
