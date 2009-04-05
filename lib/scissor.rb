@@ -168,6 +168,8 @@ class Scissor
   end
 
   def to_file(filename, options = {})
+    filename = Pathname.new(filename)
+
     if @fragments.empty?
       raise EmptyFragment
     end
@@ -203,6 +205,7 @@ class Scissor
         end
 
         fragment_tmpfile =
+          fragment.filename.extname.downcase == '.wav' ? fragment.filename :
           tmpdir + (Digest::MD5.hexdigest(fragment.filename) + '.wav')
 
         unless fragment_tmpfile.exist?
@@ -221,7 +224,14 @@ class Scissor
       end
 
       run_command(cmd.join(' '))
-      run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
+
+      if filename.extname == '.wav'
+        open(filename, 'w') do |file|
+          file.write(tmpfile.read)
+        end
+      else
+        run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
+      end
     ensure
       tmpdir.rmtree
     end
