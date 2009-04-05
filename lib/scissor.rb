@@ -225,6 +225,8 @@ class Scissor
     self.class.new(filename)
   end
 
+  alias > to_file
+
   def which(command)
     run_command("which #{command}")
 

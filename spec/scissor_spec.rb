@@ -167,6 +167,11 @@ describe Scissor do
     result.duration.to_i.should eql(140)
   end
 
+  it "should write to file using 'greater than' operator" do
+    result = @mp3.slice(0, 120) + @mp3.slice(150, 20) > '/tmp/scissor-test/out.wav'
+    result.duration.to_i.should eql(140)
+  end
+
   it "should write to file with many fragments" do
     scissor = (@mp3.slice(0, 120) / 100).inject(Scissor.new){|m, s| m + s } + @mp3.slice(10, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')

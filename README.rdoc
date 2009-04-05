@@ -42,7 +42,7 @@ supported file format:
 	 bar = Scissor.new('bar.wav')
 
 	 # concat
-	 (foo + bar).to_file('foobar.mp3')
+	 foo + bar > 'foobar.mp3'
 
 	 # slice + concat
 	 (foo.slice(10, 1) + bar.slice(2, 3)).to_file('slicefoobar.mp3')
