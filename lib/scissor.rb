@@ -1,6 +1,7 @@
 require 'mp3info'
 require 'digest/md5'
 require 'pathname'
+require 'riff/reader'
 
 class Scissor
   class Error < StandardError; end
@@ -19,7 +20,7 @@ class Scissor
       @fragments << Fragment.new(
         Pathname.new(filename),
         0,
-        Mp3Info.new(filename).length)
+        SoundFile.new(filename).length)
     end
   end
 
@@ -188,13 +189,13 @@ class Scissor
     tmpdir = Pathname.new('/tmp/scissor-' + $$.to_s)
     tmpdir.mkpath
     tmpfile = tmpdir + 'tmp.wav'
-    cmd = %w/ecasound/
+    cmd = %w/ecasound -q/
 
     begin
       @fragments.each_with_index do |fragment, index|
         if !index.zero? && (index % 80).zero?
           run_command(cmd.join(' '))
-          cmd = %w/ecasound/
+          cmd = %w/ecasound -q/
         end
 
         fragment_tmpfile =
@@ -242,6 +243,35 @@ class Scissor
       new(File.dirname(__FILE__) + '/../data/silence.mp3').
         slice(0, 1).
         fill(duration)
+    end
+  end
+
+  class SoundFile
+    SUPPORTED_FORMAT = %w/mp3 wav/
+
+    class Error < StandardError; end
+    class UnknownFormat < Error; end
+
+    def initialize(filename)
+      @filename = Pathname.new(filename)
+      @ext = @filename.extname.sub(/^\./, '').downcase
+
+      unless SUPPORTED_FORMAT.include?(@ext)
+        raise UnknownFormat
+      end
+    end
+
+    def length
+      case @ext
+      when 'mp3'
+        Mp3Info.new(@filename).length
+      when 'wav'
+        riff = Riff::Reader.open(@filename ,"r")
+        data = riff.root_chunk['data']
+        fmt = riff.root_chunk['fmt ']
+
+        data.length / fmt.body.unpack('s2i2')[3].to_f
+      end
     end
   end
 

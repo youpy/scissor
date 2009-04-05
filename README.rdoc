@@ -1,15 +1,28 @@
 = Scissor
 
 == Description
-utility to chop mp3 files
+
+utility to chop sound files
+
+supported file format:
+
+* mp3
+* wav
+
+== Installation
 
 == Requirements
 
 * {ruby-mp3info}[http://ruby-mp3info.rubyforge.org/]
-* {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
-* {Ecasound}[http://www.eca.cx/ecasound/]
 
-== Installation
+	gem install ruby-mp3info
+
+* {RiffLib}[http://rubyforge.org/projects/riff/]
+
+	gem install riff
+
+* {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
+* {Ecasound}[http://www.eca.cx/ecasound/] 2.5.0 or higher
 
 === Archive Installation
 
@@ -21,10 +34,12 @@ utility to chop mp3 files
 
 == Features/Problems
 
+* When you concatenate two or more files, format(sample rate, bit rate, ...) mismatch causes unexpected changes to output file.
+
 == Synopsis
 
 	 foo = Scissor.new('foo.mp3')
-	 bar = Scissor.new('bar.mp3')
+	 bar = Scissor.new('bar.wav')
 
 	 # concat
 	 (foo + bar).to_file('foobar.mp3')

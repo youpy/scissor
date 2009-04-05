@@ -13,11 +13,11 @@ include FileUtils
 NAME              = "scissor"
 AUTHOR            = "youpy"
 EMAIL             = "youpy@buycheapviagraonlinenow.com"
-DESCRIPTION       = "utility to chop mp3 files"
+DESCRIPTION       = "utility to chop sound files"
 RUBYFORGE_PROJECT = "scissor"
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
-VERS              = "0.0.10"
+VERS              = "0.0.11"
 
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
@@ -58,6 +58,7 @@ spec = Gem::Specification.new do |s|
   s.test_files        = Dir["test/test_*.rb"]
 
   s.add_dependency('ruby-mp3info')
+  s.add_dependency('riff')
   #s.required_ruby_version = '>= 1.8.2'
 
   s.files = %w(README.rdoc ChangeLog Rakefile) +

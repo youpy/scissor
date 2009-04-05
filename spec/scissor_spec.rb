@@ -33,39 +33,39 @@ describe Scissor do
   end
 
   it "should concatenate" do
-    new_mp3 = @mp3.slice(0, 120).concat(@mp3.slice(150, 20))
-    new_mp3.duration.should eql(140)
+    scissor = @mp3.slice(0, 120).concat(@mp3.slice(150, 20))
+    scissor.duration.should eql(140)
   end
 
   it "should concatenate using arithmetic operator" do
-    new_mp3 = @mp3.slice(0, 120) + @mp3.slice(150, 20)
-    new_mp3.duration.should eql(140)
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+    scissor.duration.should eql(140)
   end
 
   it "should concat silence" do
-    new_mp3 = @mp3.slice(0, 12).concat(Scissor.silence(3))
-    new_mp3.duration.should eql(15)
+    scissor = @mp3.slice(0, 12).concat(Scissor.silence(3))
+    scissor.duration.should eql(15)
   end
 
   it "should slice concatenated one" do
-    new_mp3 = @mp3.slice(0.33, 1).concat(@mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
+    scissor = @mp3.slice(0.33, 1).concat(@mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
 
-    new_mp3.duration.to_s.should == '0.2'
-    new_mp3.fragments.size.should eql(2)
-    new_mp3.fragments[0].start.to_s.should == '1.23'
-    new_mp3.fragments[0].duration.to_s.should == '0.1'
-    new_mp3.fragments[1].start.to_s.should == '0.2'
-    new_mp3.fragments[1].duration.to_s.should == '0.1'
+    scissor.duration.to_s.should == '0.2'
+    scissor.fragments.size.should eql(2)
+    scissor.fragments[0].start.to_s.should == '1.23'
+    scissor.fragments[0].duration.to_s.should == '0.1'
+    scissor.fragments[1].start.to_s.should == '0.2'
+    scissor.fragments[1].duration.to_s.should == '0.1'
   end
 
   it "should loop" do
-    new_mp3 = @mp3.slice(0, 10).loop(3)
-    new_mp3.duration.should eql(30)
+    scissor = @mp3.slice(0, 10).loop(3)
+    scissor.duration.should eql(30)
   end
 
   it "should loop using arithmetic operator" do
-    new_mp3 = @mp3.slice(0, 10) * 3
-    new_mp3.duration.should eql(30)
+    scissor = @mp3.slice(0, 10) * 3
+    scissor.duration.should eql(30)
   end
 
   it "should split" do
@@ -97,49 +97,49 @@ describe Scissor do
   end
 
   it "should fill" do
-    new_mp3 = (@mp3.slice(0, 6) + @mp3.slice(0, 2)).fill(15)
-    new_mp3.duration.should eql(15)
-    new_mp3.fragments.size.should eql(4)
-    new_mp3.fragments[0].duration.should eql(6)
-    new_mp3.fragments[1].duration.should eql(2)
-    new_mp3.fragments[2].duration.should eql(6)
-    new_mp3.fragments[3].duration.should eql(1)
+    scissor = (@mp3.slice(0, 6) + @mp3.slice(0, 2)).fill(15)
+    scissor.duration.should eql(15)
+    scissor.fragments.size.should eql(4)
+    scissor.fragments[0].duration.should eql(6)
+    scissor.fragments[1].duration.should eql(2)
+    scissor.fragments[2].duration.should eql(6)
+    scissor.fragments[3].duration.should eql(1)
   end
 
   it "should replace" do
-    new_mp3 = @mp3.slice(0, 100).replace(60, 30, @mp3.slice(0, 60))
-    new_mp3.duration.should eql(130)
-    new_mp3.fragments.size.should eql(3)
-    new_mp3.fragments[0].start.should eql(0)
-    new_mp3.fragments[0].duration.should eql(60)
-    new_mp3.fragments[1].start.should eql(0)
-    new_mp3.fragments[1].duration.should eql(60)
-    new_mp3.fragments[2].start.should eql(90)
-    new_mp3.fragments[2].duration.should eql(10)
+    scissor = @mp3.slice(0, 100).replace(60, 30, @mp3.slice(0, 60))
+    scissor.duration.should eql(130)
+    scissor.fragments.size.should eql(3)
+    scissor.fragments[0].start.should eql(0)
+    scissor.fragments[0].duration.should eql(60)
+    scissor.fragments[1].start.should eql(0)
+    scissor.fragments[1].duration.should eql(60)
+    scissor.fragments[2].start.should eql(90)
+    scissor.fragments[2].duration.should eql(10)
   end
 
   it "should reverse" do
-    new_mp3 = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse
-    new_mp3.duration.should eql(15)
-    new_mp3.fragments.size.should eql(2)
-    new_mp3.fragments[0].start.should eql(0)
-    new_mp3.fragments[0].duration.should eql(5)
-    new_mp3.fragments[0].should be_reversed
-    new_mp3.fragments[1].start.should eql(0)
-    new_mp3.fragments[1].duration.should eql(10)
-    new_mp3.fragments[0].should be_reversed
+    scissor = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse
+    scissor.duration.should eql(15)
+    scissor.fragments.size.should eql(2)
+    scissor.fragments[0].start.should eql(0)
+    scissor.fragments[0].duration.should eql(5)
+    scissor.fragments[0].should be_reversed
+    scissor.fragments[1].start.should eql(0)
+    scissor.fragments[1].duration.should eql(10)
+    scissor.fragments[0].should be_reversed
   end
 
   it "should re-reverse" do
-    new_mp3 = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse.reverse
-    new_mp3.duration.should eql(15)
-    new_mp3.fragments.size.should eql(2)
-    new_mp3.fragments[0].start.should eql(0)
-    new_mp3.fragments[0].duration.should eql(10)
-    new_mp3.fragments[0].should_not be_reversed
-    new_mp3.fragments[1].start.should eql(0)
-    new_mp3.fragments[1].duration.should eql(5)
-    new_mp3.fragments[0].should_not be_reversed
+    scissor = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse.reverse
+    scissor.duration.should eql(15)
+    scissor.fragments.size.should eql(2)
+    scissor.fragments[0].start.should eql(0)
+    scissor.fragments[0].duration.should eql(10)
+    scissor.fragments[0].should_not be_reversed
+    scissor.fragments[1].start.should eql(0)
+    scissor.fragments[1].duration.should eql(5)
+    scissor.fragments[0].should_not be_reversed
   end
 
   it "should raise error if replaced range is out of duration" do
@@ -149,15 +149,27 @@ describe Scissor do
   end
 
   it "should write to file and return new instance of Scissor" do
-    new_mp3 = @mp3.slice(0, 120) + @mp3.slice(150, 20)
-    result = new_mp3.to_file('/tmp/scissor-test/out.mp3')
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+    result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor)
     result.duration.to_i.should eql(140)
   end
 
+  it "should write to mp3 file" do
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+    result = scissor.to_file('/tmp/scissor-test/out.mp3')
+    result.duration.to_i.should eql(140)
+  end
+
+  it "should write to wav file" do
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+    result = scissor.to_file('/tmp/scissor-test/out.wav')
+    result.duration.to_i.should eql(140)
+  end
+
   it "should write to file with many fragments" do
-    new_mp3 = (@mp3.slice(0, 120) / 100).inject(Scissor.new){|m, s| m + s } + @mp3.slice(10, 20)
-    result = new_mp3.to_file('/tmp/scissor-test/out.mp3')
+    scissor = (@mp3.slice(0, 120) / 100).inject(Scissor.new){|m, s| m + s } + @mp3.slice(10, 20)
+    result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor)
     result.duration.to_i.should eql(140)
   end
