@@ -13,14 +13,6 @@ supported file format:
 
 === Requirements
 
-* {ruby-mp3info}[http://ruby-mp3info.rubyforge.org/]
-
-	gem install ruby-mp3info
-
-* {RiffLib}[http://rubyforge.org/projects/riff/]
-
-	gem install riff
-
 * {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
 * {Ecasound}[http://www.eca.cx/ecasound/] 2.5.0 or higher
 
