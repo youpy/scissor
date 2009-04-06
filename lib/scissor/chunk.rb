@@ -83,7 +83,17 @@ module Scissor
       self
     end
 
-    alias + concat
+    alias << concat
+
+    def +(other)
+      new_instance = Scissor()
+
+      (@fragments + other.fragments).each do |fragment|
+        new_instance.add_fragment(fragment)
+      end
+
+      new_instance
+    end
 
     def loop(count)
       orig_fragments = @fragments.clone

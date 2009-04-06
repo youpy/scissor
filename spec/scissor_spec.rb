@@ -33,18 +33,29 @@ describe Scissor do
   end
 
   it "should concatenate" do
-    scissor = @mp3.slice(0, 120).concat(@mp3.slice(150, 20))
+    a = @mp3.slice(0, 120)
+    scissor = a.concat(@mp3.slice(150, 20))
     scissor.duration.should eql(140)
+    a.duration.should eql(140)
   end
 
-  it "should concatenate using arithmetic operator" do
-    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+  it "should concatenate using double 'less than' operator" do
+    a = @mp3.slice(0, 120)
+    scissor = a << @mp3.slice(150, 20)
     scissor.duration.should eql(140)
+    a.duration.should eql(140)
   end
 
   it "should concat silence" do
     scissor = @mp3.slice(0, 12).concat(Scissor.silence(3))
     scissor.duration.should eql(15)
+  end
+
+  it "should concatenate and create new instance" do
+    a = @mp3.slice(0, 120)
+    scissor = a + @mp3.slice(150, 20)
+    scissor.duration.should eql(140)
+    a.duration.should eql(120)
   end
 
   it "should slice concatenated one" do
