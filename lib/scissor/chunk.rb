@@ -21,7 +21,7 @@ module Scissor
 
       if filename
         @fragments << Fragment.new(
-          Pathname.new(filename),
+          filename,
           0,
           SoundFile.new(filename).length)
       end
@@ -43,32 +43,19 @@ module Scissor
       end
 
       new_instance = self.class.new
-      remain = length
+      remaining_start = start.to_f
+      remaining_length = length.to_f
 
       @fragments.each do |fragment|
-        if start >= fragment.duration
-          start -= fragment.duration
+        new_fragment, remaining_start, remaining_length =
+          fragment.create(remaining_start, remaining_length)
 
-          next
+        if new_fragment
+          new_instance.add_fragment(new_fragment)
         end
 
-        if (start + remain) <= fragment.duration
-          new_instance.add_fragment(Fragment.new(
-              fragment.filename,
-              fragment.start + start,
-              remain,
-              fragment.reversed?))
-
+        if remaining_length == 0
           break
-        else
-          remain = remain - (fragment.duration - start)
-          new_instance.add_fragment(Fragment.new(
-              fragment.filename,
-              fragment.start + start,
-              fragment.duration - start,
-              fragment.reversed?))
-
-          start = 0
         end
       end
 

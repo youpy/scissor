@@ -22,8 +22,8 @@ describe Scissor do
 
   it "should slice" do
     @mp3.should respond_to(:slice)
-    @mp3.slice(0, 120).duration.should eql(120)
-    @mp3.slice(150, 20).duration.should eql(20)
+    @mp3.slice(0, 120).duration.should eql(120.0)
+    @mp3.slice(150, 20).duration.should eql(20.0)
   end
 
   it "should raise error if sliced range is out of duration" do
@@ -35,27 +35,27 @@ describe Scissor do
   it "should concatenate" do
     a = @mp3.slice(0, 120)
     scissor = a.concat(@mp3.slice(150, 20))
-    scissor.duration.should eql(140)
-    a.duration.should eql(140)
+    scissor.duration.should eql(140.0)
+    a.duration.should eql(140.0)
   end
 
   it "should concatenate using double 'less than' operator" do
     a = @mp3.slice(0, 120)
     scissor = a << @mp3.slice(150, 20)
-    scissor.duration.should eql(140)
-    a.duration.should eql(140)
+    scissor.duration.should eql(140.0)
+    a.duration.should eql(140.0)
   end
 
   it "should concat silence" do
     scissor = @mp3.slice(0, 12).concat(Scissor.silence(3))
-    scissor.duration.should eql(15)
+    scissor.duration.should eql(15.0)
   end
 
   it "should concatenate and create new instance" do
     a = @mp3.slice(0, 120)
     scissor = a + @mp3.slice(150, 20)
-    scissor.duration.should eql(140)
-    a.duration.should eql(120)
+    scissor.duration.should eql(140.0)
+    a.duration.should eql(120.0)
   end
 
   it "should slice concatenated one" do
@@ -71,12 +71,12 @@ describe Scissor do
 
   it "should loop" do
     scissor = @mp3.slice(0, 10).loop(3)
-    scissor.duration.should eql(30)
+    scissor.duration.should eql(30.0)
   end
 
   it "should loop using arithmetic operator" do
     scissor = @mp3.slice(0, 10) * 3
-    scissor.duration.should eql(30)
+    scissor.duration.should eql(30.0)
   end
 
   it "should split" do
@@ -109,47 +109,47 @@ describe Scissor do
 
   it "should fill" do
     scissor = (@mp3.slice(0, 6) + @mp3.slice(0, 2)).fill(15)
-    scissor.duration.should eql(15)
+    scissor.duration.should eql(15.0)
     scissor.fragments.size.should eql(4)
-    scissor.fragments[0].duration.should eql(6)
-    scissor.fragments[1].duration.should eql(2)
-    scissor.fragments[2].duration.should eql(6)
-    scissor.fragments[3].duration.should eql(1)
+    scissor.fragments[0].duration.should eql(6.0)
+    scissor.fragments[1].duration.should eql(2.0)
+    scissor.fragments[2].duration.should eql(6.0)
+    scissor.fragments[3].duration.should eql(1.0)
   end
 
   it "should replace" do
     scissor = @mp3.slice(0, 100).replace(60, 30, @mp3.slice(0, 60))
-    scissor.duration.should eql(130)
+    scissor.duration.should eql(130.0)
     scissor.fragments.size.should eql(3)
-    scissor.fragments[0].start.should eql(0)
-    scissor.fragments[0].duration.should eql(60)
-    scissor.fragments[1].start.should eql(0)
-    scissor.fragments[1].duration.should eql(60)
-    scissor.fragments[2].start.should eql(90)
-    scissor.fragments[2].duration.should eql(10)
+    scissor.fragments[0].start.should eql(0.0)
+    scissor.fragments[0].duration.should eql(60.0)
+    scissor.fragments[1].start.should eql(0.0)
+    scissor.fragments[1].duration.should eql(60.0)
+    scissor.fragments[2].start.should eql(90.0)
+    scissor.fragments[2].duration.should eql(10.0)
   end
 
   it "should reverse" do
     scissor = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse
-    scissor.duration.should eql(15)
+    scissor.duration.should eql(15.0)
     scissor.fragments.size.should eql(2)
-    scissor.fragments[0].start.should eql(0)
-    scissor.fragments[0].duration.should eql(5)
+    scissor.fragments[0].start.should eql(0.0)
+    scissor.fragments[0].duration.should eql(5.0)
     scissor.fragments[0].should be_reversed
-    scissor.fragments[1].start.should eql(0)
-    scissor.fragments[1].duration.should eql(10)
+    scissor.fragments[1].start.should eql(0.0)
+    scissor.fragments[1].duration.should eql(10.0)
     scissor.fragments[0].should be_reversed
   end
 
   it "should re-reverse" do
     scissor = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).reverse.reverse
-    scissor.duration.should eql(15)
+    scissor.duration.should eql(15.0)
     scissor.fragments.size.should eql(2)
-    scissor.fragments[0].start.should eql(0)
-    scissor.fragments[0].duration.should eql(10)
+    scissor.fragments[0].start.should eql(0.0)
+    scissor.fragments[0].duration.should eql(10.0)
     scissor.fragments[0].should_not be_reversed
-    scissor.fragments[1].start.should eql(0)
-    scissor.fragments[1].duration.should eql(5)
+    scissor.fragments[1].start.should eql(0.0)
+    scissor.fragments[1].duration.should eql(5.0)
     scissor.fragments[0].should_not be_reversed
   end
 
