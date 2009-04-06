@@ -4,8 +4,8 @@ require 'spec_helper'
 
 describe Scissor::Sequence do
   before do
-    @foo = Scissor.new(fixture('sample.mp3'))
-    @bar = Scissor.new(fixture('sine.wav'))
+    @foo = Scissor(fixture('sample.mp3'))
+    @bar = Scissor(fixture('sine.wav'))
   end
 
   it "should instantiated" do
@@ -17,7 +17,7 @@ describe Scissor::Sequence do
     seq = Scissor.sequence('ababaab ab', 0.5)
     scissor = seq.apply(:a => @foo, :b => @bar)
 
-    scissor.should be_an_instance_of(Scissor)
+    scissor.should be_an_instance_of(Scissor::Chunk)
     scissor.duration.should eql(5.0)
     scissor.fragments.size.should eql(10)
 

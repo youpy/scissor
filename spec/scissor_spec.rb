@@ -7,7 +7,7 @@ include FileUtils
 
 describe Scissor do
   before do
-    @mp3 = Scissor.new(fixture('sample.mp3'))
+    @mp3 = Scissor(fixture('sample.mp3'))
     mkdir '/tmp/scissor-test'
   end
 
@@ -29,7 +29,7 @@ describe Scissor do
   it "should raise error if sliced range is out of duration" do
     lambda {
       @mp3.slice(0, 179)
-    }.should raise_error(Scissor::OutOfDuration)
+    }.should raise_error(Scissor::Chunk::OutOfDuration)
   end
 
   it "should concatenate" do
@@ -145,13 +145,13 @@ describe Scissor do
   it "should raise error if replaced range is out of duration" do
     lambda {
       @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))
-    }.should raise_error(Scissor::OutOfDuration)
+    }.should raise_error(Scissor::Chunk::OutOfDuration)
   end
 
   it "should write to file and return new instance of Scissor" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.should be_an_instance_of(Scissor)
+    result.should be_an_instance_of(Scissor::Chunk)
     result.duration.to_i.should eql(140)
   end
 
@@ -173,9 +173,9 @@ describe Scissor do
   end
 
   it "should write to file with many fragments" do
-    scissor = (@mp3.slice(0, 120) / 100).inject(Scissor.new){|m, s| m + s } + @mp3.slice(10, 20)
+    scissor = (@mp3.slice(0, 120) / 100).inject(Scissor()){|m, s| m + s } + @mp3.slice(10, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.should be_an_instance_of(Scissor)
+    result.should be_an_instance_of(Scissor::Chunk)
     result.duration.to_i.should eql(140)
   end
 
@@ -188,6 +188,14 @@ describe Scissor do
     result.duration.to_i.should eql(12)
   end
 
+  it "should overwrite existing file using double 'greater than' oprator" do
+    result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
+    result.duration.to_i.should eql(10)
+
+    result = @mp3.slice(0, 12) >> '/tmp/scissor-test/out.mp3'
+    result.duration.to_i.should eql(12)
+  end
+
   it "should raise error if overwrite option is false" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
     result.duration.to_i.should eql(10)
@@ -195,16 +203,16 @@ describe Scissor do
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
         :overwrite => false)
-    }.should raise_error(Scissor::FileExists)
+    }.should raise_error(Scissor::Chunk::FileExists)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::FileExists)
+    }.should raise_error(Scissor::Chunk::FileExists)
   end
 
   it "should raise error if no fragment are given" do
     lambda {
-      Scissor.new.to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::EmptyFragment)
+      Scissor().to_file('/tmp/scissor-test/out.mp3')
+    }.should raise_error(Scissor::Chunk::EmptyFragment)
   end
 end

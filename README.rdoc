@@ -30,8 +30,8 @@ supported file format:
 
 == Synopsis
 
-	 foo = Scissor.new('foo.mp3')
-	 bar = Scissor.new('bar.wav')
+	 foo = Scissor('foo.mp3')
+	 bar = Scissor('bar.wav')
 
 	 # concat
 	 foo + bar > 'foobar.mp3'

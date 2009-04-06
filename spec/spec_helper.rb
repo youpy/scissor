@@ -5,4 +5,3 @@ require 'scissor'
 def fixture(filename)
   File.dirname(__FILE__) + '/fixtures/' + filename
 end
-
