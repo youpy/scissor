@@ -26,6 +26,11 @@ describe Scissor do
     @mp3.slice(150, 20).duration.should eql(20.0)
   end
 
+  it "should slice like array" do
+    @mp3[0, 120].duration.should eql(120.0)
+    @mp3[150, 20].duration.should eql(20.0)
+  end
+
   it "should raise error if sliced range is out of duration" do
     lambda {
       @mp3.slice(0, 179)

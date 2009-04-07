@@ -62,6 +62,8 @@ module Scissor
       new_instance
     end
 
+    alias [] slice
+
     def concat(other)
       other.fragments.each do |fragment|
         add_fragment(fragment)

@@ -1,7 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'spec_helper'
-require 'bigdecimal'
 
 describe Scissor::Fragment do
   before do
