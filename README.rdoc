@@ -50,7 +50,7 @@ supported file format:
 
 	 # sequence + loop
 	 seq = Scissor.sequence('x y  xyz', 0.2)
-	 seq.apply(:x => foo, :y => bar, :z => foo.reverse) * 4 > 'sequence.wav'
+	 seq.apply(:x => foo, :y => Proc.new { bar }, :z => foo.reverse) * 4 > 'sequence.wav'
 
 == Copyright
 
