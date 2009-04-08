@@ -5,18 +5,22 @@ module Scissor
       @duration_per_step = duration_per_step
     end
 
-    def apply(scissors)
+    def apply(instruments)
       result = Scissor()
 
       @pattern.split(//).each do |c|
-        if scissors.include?(c.to_sym)
-          scissor = scissors[c.to_sym]
+        if instruments.include?(c.to_sym)
+          instrument = instruments[c.to_sym]
 
-          if @duration_per_step > scissor.duration
-            result += scissor
-            result += Scissor.silence(@duration_per_step - scissor.duration)
+          if instrument.is_a?(Proc)
+            instrument = instrument.call(c)
+          end
+
+          if @duration_per_step > instrument.duration
+            result += instrument
+            result += Scissor.silence(@duration_per_step - instrument.duration)
           else
-            result += scissors[c.to_sym].slice(0, @duration_per_step)
+            result += instrument.slice(0, @duration_per_step)
           end
         else
           result += Scissor.silence(@duration_per_step)
