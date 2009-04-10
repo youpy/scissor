@@ -224,9 +224,7 @@ module Scissor
         run_command(cmd.join(' '))
 
         if filename.extname == '.wav'
-          open(filename, 'w') do |file|
-            file.write(tmpfile.read)
-          end
+          File.rename(tmpfile, filename)
         else
           run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
         end
