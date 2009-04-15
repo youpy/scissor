@@ -63,7 +63,7 @@ describe Scissor::Sequence do
     seq = Scissor.sequence('ba', 1.5)
     scissor = seq.apply(:a => @foo, :b => @bar)
 
-    scissor.duration.should eql(3.0)
+    scissor.duration.to_s.should eql("3.0")
     scissor.fragments.size.should eql(3)
     scissor.fragments[0].filename.to_s.should eql(fixture('sine.wav'))
     scissor.fragments[1].filename.to_s.should match(/silence\.mp3/)

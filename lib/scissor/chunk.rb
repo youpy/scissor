@@ -2,9 +2,17 @@ require 'digest/md5'
 require 'pathname'
 require 'open4'
 require 'logger'
+require 'bigdecimal'
 
 module Scissor
   class Chunk
+    @logger = Logger.new(STDOUT)
+    @logger.level = Logger::INFO
+
+    class << self
+      attr_accessor :logger
+    end
+
     class Error < StandardError; end
     class FileExists < Error; end
     class EmptyFragment < Error; end
@@ -12,12 +20,9 @@ module Scissor
     class CommandFailed < Error; end
 
     attr_reader :fragments
-    attr_accessor :logger
 
     def initialize(filename = nil)
       @fragments = []
-      @logger = Logger.new(STDOUT)
-      @logger.level = Logger::INFO
 
       if filename
         @fragments << Fragment.new(
@@ -31,10 +36,17 @@ module Scissor
       @fragments << fragment
     end
 
-    def duration
-      @fragments.inject(0) do |memo, fragment|
-        memo += fragment.duration
+    def add_fragments(fragments)
+      fragments.each do |fragment|
+        add_fragment(fragment)
       end
+    end
+
+    def duration
+      BigDecimal(
+        @fragments.inject(0) do |memo, fragment|
+          memo += fragment.duration
+        end.to_s).round(3).to_f
     end
 
     def slice(start, length)
@@ -65,9 +77,7 @@ module Scissor
     alias [] slice
 
     def concat(other)
-      other.fragments.each do |fragment|
-        add_fragment(fragment)
-      end
+      add_fragments(other.fragments)
 
       self
     end
@@ -76,11 +86,7 @@ module Scissor
 
     def +(other)
       new_instance = Scissor()
-
-      (@fragments + other.fragments).each do |fragment|
-        new_instance.add_fragment(fragment)
-      end
-
+      new_instance.add_fragments(@fragments + other.fragments)
       new_instance
     end
 
@@ -88,9 +94,7 @@ module Scissor
       orig_fragments = @fragments.clone
 
       (count - 1).times do
-        orig_fragments.each do |fragment|
-          add_fragment(fragment)
-        end
+        add_fragments(orig_fragments)
       end
 
       self
@@ -133,11 +137,11 @@ module Scissor
       new_instance
     end
 
-    def replace(start, duration, replaced)
+    def replace(start, length, replaced)
       new_instance = self.class.new
-      offset = start + duration
+      offset = start + length
 
-      if offset > self.duration
+      if offset > duration
         raise OutOfDuration
       end
 
@@ -146,7 +150,7 @@ module Scissor
       end
 
       new_instance += replaced
-      new_instance += slice(offset, self.duration - offset)
+      new_instance += slice(offset, duration - offset)
 
       new_instance
     end
@@ -197,28 +201,31 @@ module Scissor
 
       begin
         @fragments.each_with_index do |fragment, index|
+          fragment_filename = fragment.filename
+          fragment_duration = fragment.duration
+
           if !index.zero? && (index % 80).zero?
             run_command(cmd.join(' '))
             cmd = %w/ecasound/
           end
 
           fragment_tmpfile =
-            fragment.filename.extname.downcase == '.wav' ? fragment.filename :
-            tmpdir + (Digest::MD5.hexdigest(fragment.filename) + '.wav')
+            fragment_filename.extname.downcase == '.wav' ? fragment_filename :
+            tmpdir + (Digest::MD5.hexdigest(fragment_filename) + '.wav')
 
           unless fragment_tmpfile.exist?
-            run_command("ffmpeg -i \"#{fragment.filename}\" \"#{fragment_tmpfile}\"")
+            run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_tmpfile}\"")
           end
 
           cmd <<
             "-a:#{index} " +
             "-i:" +
             (fragment.reversed? ? 'reverse,' : '') +
-            "select,#{fragment.start},#{fragment.duration},\"#{fragment_tmpfile}\" " +
+            "select,#{fragment.start},#{fragment_duration},\"#{fragment_tmpfile}\" " +
             "-o:#{tmpfile} " +
             "-y:#{position}"
 
-          position += fragment.duration
+          position += fragment_duration
         end
 
         run_command(cmd.join(' '))
@@ -246,11 +253,11 @@ module Scissor
     end
 
     def run_command(cmd)
-      @logger.debug("run_command: #{cmd}")
+      logger.debug("run_command: #{cmd}")
 
       result = ''
       status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
-        @logger.debug(stderr.read)
+        logger.debug(stderr.read)
         result = stdout.read
       end
 
@@ -259,6 +266,10 @@ module Scissor
       end
 
       return result
+    end
+
+    def logger
+      self.class.logger
     end
   end
 end
