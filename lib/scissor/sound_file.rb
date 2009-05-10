@@ -4,7 +4,7 @@ require 'riff/reader'
 
 module Scissor
   class SoundFile
-    SUPPORTED_FORMAT = %w/mp3 wav/
+    SUPPORTED_FORMATS = %w/mp3 wav/
 
     class Error < StandardError; end
     class UnknownFormat < Error; end
@@ -13,7 +13,7 @@ module Scissor
       @filename = Pathname.new(filename)
       @ext = @filename.extname.sub(/^\./, '').downcase
 
-      unless SUPPORTED_FORMAT.include?(@ext)
+      unless SUPPORTED_FORMATS.include?(@ext)
         raise UnknownFormat
       end
     end
