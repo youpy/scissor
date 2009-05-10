@@ -31,10 +31,8 @@ describe Scissor do
     @mp3[150, 20].duration.should eql(20.0)
   end
 
-  it "should raise error if sliced range is out of duration" do
-    lambda {
-      @mp3.slice(0, 179)
-    }.should raise_error(Scissor::Chunk::OutOfDuration)
+  it "should cut down if sliced range is out of duration" do
+    @mp3.slice(0, 179).duration.should eql(178.183)
   end
 
   it "should concatenate" do
@@ -52,8 +50,8 @@ describe Scissor do
   end
 
   it "should concat silence" do
-    scissor = @mp3.slice(0, 12).concat(Scissor.silence(3))
-    scissor.duration.should eql(15.0)
+    scissor = @mp3.slice(0, 12).concat(Scissor.silence(0.32009))
+    scissor.duration.should be_close(12.32, 0.01)
   end
 
   it "should concatenate and create new instance" do

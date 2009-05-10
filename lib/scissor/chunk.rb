@@ -2,7 +2,6 @@ require 'digest/md5'
 require 'pathname'
 require 'open4'
 require 'logger'
-require 'bigdecimal'
 
 module Scissor
   class Chunk
@@ -43,15 +42,14 @@ module Scissor
     end
 
     def duration
-      BigDecimal(
-        @fragments.inject(0) do |memo, fragment|
-          memo += fragment.duration
-        end.to_s).round(3).to_f
+      @fragments.inject(0) do |memo, fragment|
+        memo += fragment.duration
+      end
     end
 
     def slice(start, length)
       if start + length > duration
-        raise OutOfDuration
+        length = duration - start
       end
 
       new_instance = self.class.new
@@ -133,6 +131,7 @@ module Scissor
         new_instance += added
         remain -= added.duration
       end
+
 
       new_instance
     end
