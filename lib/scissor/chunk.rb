@@ -121,7 +121,7 @@ module Scissor
       remain = filled_duration
       new_instance = self.class.new
 
-      while filled_duration > new_instance.duration
+      while !remain.zero? && filled_duration > new_instance.duration
         if remain < duration
           added = slice(0, remain)
         else
