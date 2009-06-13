@@ -38,7 +38,7 @@ supported file format:
 	 foo + bar > 'foobar.mp3'
 
 	 # slice + concat
-	 foo[10, 1] + bar.slice[2, 3] > 'slicefoobar.mp3'
+	 foo[10, 1] + bar[2, 3] > 'slicefoobar.mp3'
 
 	 # slice + concat + loop
 	 (foo[10, 1] + bar[2, 3]) * 4 > 'slicefoobarloop.mp3'
