@@ -156,6 +156,16 @@ describe Scissor do
     scissor.fragments[0].should_not be_reversed
   end
 
+  it "should join instances of scissor" do
+    a = @mp3.slice(0, 120)
+    b = @mp3.slice(150, 20)
+
+    scissor = Scissor.join([a, b])
+    scissor.duration.should eql(140.0)
+    scissor.fragments[0].duration.should eql(120.0)
+  end
+
+
   it "should raise error if replaced range is out of duration" do
     lambda {
       @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))

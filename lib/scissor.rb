@@ -17,4 +17,10 @@ module Scissor
   def self.sequence(*args)
     Scissor::Sequence.new(*args)
   end
+
+  def self.join(scissor_array)
+    scissor_array.inject(Scissor()) do |m, scissor|
+      m + scissor
+    end
+  end
 end
