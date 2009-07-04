@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{scissor}
-  s.version = "0.0.18"
+  s.version = "0.0.19"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["youpy"]
-  s.date = %q{2009-07-03}
+  s.date = %q{2009-07-04}
   s.description = %q{utility to chop sound files}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
   s.extra_rdoc_files = ["README.rdoc", "ChangeLog"]
@@ -27,14 +27,17 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<open4>, [">= 0"])
       s.add_runtime_dependency(%q<ruby-mp3info>, [">= 0"])
       s.add_runtime_dependency(%q<riff>, [">= 0"])
+      s.add_runtime_dependency(%q<tempdir>, [">= 0"])
     else
       s.add_dependency(%q<open4>, [">= 0"])
       s.add_dependency(%q<ruby-mp3info>, [">= 0"])
       s.add_dependency(%q<riff>, [">= 0"])
+      s.add_dependency(%q<tempdir>, [">= 0"])
     end
   else
     s.add_dependency(%q<open4>, [">= 0"])
     s.add_dependency(%q<ruby-mp3info>, [">= 0"])
     s.add_dependency(%q<riff>, [">= 0"])
+    s.add_dependency(%q<tempdir>, [">= 0"])
   end
 end
