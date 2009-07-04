@@ -60,6 +60,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('open4')
   s.add_dependency('ruby-mp3info')
   s.add_dependency('riff')
+  s.add_dependency('tempdir')
   #s.required_ruby_version = '>= 1.8.2'
 
   s.files = %w(README.rdoc ChangeLog Rakefile) +

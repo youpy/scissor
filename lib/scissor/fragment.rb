@@ -5,7 +5,7 @@ module Scissor
     attr_reader :filename, :start, :duration
 
     def initialize(filename, start, duration, reverse = false)
-      @filename = Pathname.new(filename)
+      @filename = Pathname.new(filename).realpath
       @start = start
       @duration = duration
       @reverse = reverse

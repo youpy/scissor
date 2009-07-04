@@ -2,6 +2,7 @@ require 'digest/md5'
 require 'pathname'
 require 'open4'
 require 'logger'
+require 'temp_dir'
 
 module Scissor
   class Chunk
@@ -193,12 +194,12 @@ module Scissor
       end
 
       position = 0.0
-      tmpdir = Pathname.new('/tmp/scissor-' + $$.to_s)
-      tmpdir.mkpath
-      tmpfile = tmpdir + 'tmp.wav'
-      cmd = %w/ecasound/
 
-      begin
+      TempDir.create do |dir|
+        tmpdir = Pathname.new(dir)
+        tmpfile = tmpdir + 'tmp.wav'
+        cmd = %w/ecasound/
+
         @fragments.each_with_index do |fragment, index|
           fragment_filename = fragment.filename
           fragment_duration = fragment.duration
@@ -234,8 +235,6 @@ module Scissor
         else
           run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
         end
-      ensure
-        tmpdir.rmtree
       end
 
       self.class.new(filename)
