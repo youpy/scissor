@@ -46,8 +46,9 @@ module Scissor
           "-a:#{index} " +
           "-i:" +
           (fragment.reversed? ? 'reverse,' : '') +
-          "select,#{fragment.start},#{fragment_duration},\"#{fragment_outfile}\" " +
+          "select,#{fragment.start},#{fragment.true_duration},\"#{fragment_outfile}\" " +
           "-o:#{outfile} " +
+          (fragment.pitch.to_f == 100.0 ? "" : "-ei:#{fragment.pitch} ") +
           "-y:#{position}"
 
         position += fragment_duration

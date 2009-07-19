@@ -30,6 +30,13 @@ describe Scissor::Fragment do
     }.should raise_error(TypeError)
   end
 
+  it "should have a pitch" do
+    fragment = Scissor::Fragment.new(fixture('sample.mp3'), 5, 10.5, false, 50)
+
+    fragment.pitch.should eql(50)
+    fragment.duration.should eql(21.0)
+  end
+
   it "should return new fragment and remaining start point and length" do
     new_fragment, remaining_start, remaining_length = @fragment.create(0.5, 1.0)
     new_fragment.filename.should eql(fixture('sample.mp3'))
@@ -49,5 +56,42 @@ describe Scissor::Fragment do
     new_fragment.duration.should eql(0.5)
     remaining_start.should eql(0)
     remaining_length.should eql(0.5)
+  end
+
+  it "should return new fragment and remaining start point and length in half pitch" do
+    fragment = Scissor::Fragment.new(fixture('sample.mp3'), 5, 10.5, false, 50)
+
+    new_fragment, remaining_start, remaining_length = fragment.create(0.5, 1.0)
+    new_fragment.filename.should eql(fixture('sample.mp3'))
+    new_fragment.start.should eql(5.25)
+    new_fragment.duration.should eql(1.0)
+    new_fragment.pitch.should eql(50)
+    remaining_start.should eql(0)
+    remaining_length.should eql(0)
+
+    new_fragment, remaining_start, remaining_length = fragment.create(10.5, 1.0)
+    new_fragment.filename.should eql(fixture('sample.mp3'))
+    new_fragment.start.should eql(10.25)
+    new_fragment.duration.should eql(1.0)
+    new_fragment.pitch.should eql(50)
+    remaining_start.should eql(0)
+    remaining_length.should eql(0)
+
+    new_fragment, remaining_start, remaining_length = fragment.create(20, 3)
+    new_fragment.start.should eql(15.0)
+    new_fragment.duration.should eql(1.0)
+    new_fragment.pitch.should eql(50)
+    remaining_start.should eql(0)
+    remaining_length.should eql(2.0)
+
+    new_fragment, remaining_start, remaining_length = fragment.create(21, 1.0)
+    new_fragment.should be_nil
+    remaining_start.should eql(0.0)
+    remaining_length.should eql(1.0)
+
+    new_fragment, remaining_start, remaining_length = fragment.create(22, 1.0)
+    new_fragment.should be_nil
+    remaining_start.should eql(1.0)
+    remaining_length.should eql(1.0)
   end
 end

@@ -156,6 +156,15 @@ describe Scissor do
     scissor.fragments[0].should_not be_reversed
   end
 
+  it "should change pitch" do
+    scissor = @mp3.slice(0, 10) + @mp3.slice(0, 5)
+
+    scissor.duration.should eql(15.0)
+    scissor.pitch(50).duration.should eql(30.0)
+    scissor.pitch(50).pitch(50).fragments[0].pitch.should eql(25.0)
+    scissor.pitch(50).pitch(50).duration.should eql(60.0)
+  end
+
   it "should join instances of scissor" do
     a = @mp3.slice(0, 120)
     b = @mp3.slice(150, 20)
@@ -227,6 +236,16 @@ describe Scissor do
 
     result = @mp3.slice(0, 12) >> '/tmp/scissor-test/out.mp3'
     result.duration.to_i.should eql(12)
+  end
+
+  it "should write to file in the variable pitch" do
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+
+    result = scissor.pitch(50).to_file('/tmp/scissor-test/out.mp3')
+    result.duration.to_i.should eql(280)
+
+    result = scissor.pitch(200).to_file('/tmp/scissor-test/out.mp3', :overwrite => true)
+    result.duration.to_i.should eql(70)
   end
 
   it "should raise error if overwrite option is false" do
