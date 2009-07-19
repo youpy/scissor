@@ -160,7 +160,7 @@ module Scissor
     def to_file(filename, options = {})
       writer = Writer.new
 
-      writer.add_fragments(@fragments)
+      writer.add_track(@fragments)
       writer.to_file(filename, options)
 
       self.class.new(filename)

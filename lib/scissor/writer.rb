@@ -12,10 +12,59 @@ module Scissor
 
     def initialize
       @tracks = []
+
+      which('ecasound')
+      which('ffmpeg')
     end
 
-    def add_fragments(fragments)
+    def add_track(fragments)
       @tracks << fragments
+    end
+
+    def fragments_to_file(fragments, outfile, tmpdir)
+      position = 0.0
+      cmd = %w/ecasound/
+
+      fragments.each_with_index do |fragment, index|
+        fragment_filename = fragment.filename
+        fragment_duration = fragment.duration
+
+        if !index.zero? && (index % 80).zero?
+          run_command(cmd.join(' '))
+          cmd = %w/ecasound/
+        end
+
+        fragment_outfile =
+          fragment_filename.extname.downcase == '.wav' ? fragment_filename :
+          tmpdir + (Digest::MD5.hexdigest(fragment_filename) + '.wav')
+
+        unless fragment_outfile.exist?
+          run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_outfile}\"")
+        end
+
+        cmd <<
+          "-a:#{index} " +
+          "-i:" +
+          (fragment.reversed? ? 'reverse,' : '') +
+          "select,#{fragment.start},#{fragment_duration},\"#{fragment_outfile}\" " +
+          "-o:#{outfile} " +
+          "-y:#{position}"
+
+        position += fragment_duration
+      end
+
+      run_command(cmd.join(' '))
+    end
+
+    def mix_files(filenames, outfile)
+      cmd = %w/ecasound/
+
+      filenames.each_with_index do |tf, index|
+        cmd << "-a:#{index} -i:#{tf}"
+      end
+
+      cmd << "-a:all -o:#{outfile}"
+      run_command(cmd.join(' '))
     end
 
     def to_file(filename, options)
@@ -25,14 +74,9 @@ module Scissor
         raise EmptyFragment
       end
 
-      which('ecasound')
-      which('ffmpeg')
-
       options = {
         :overwrite => false
       }.merge(options)
-
-      filename = Pathname.new(filename)
 
       if filename.exist?
         if options[:overwrite]
@@ -44,64 +88,19 @@ module Scissor
 
       TempDir.create do |dir|
         tmpdir = Pathname.new(dir)
-        cmd = %w/ecasound/
-        index = 0
         tmpfiles = []
 
         @tracks.each_with_index do |fragments, track_index|
           tmpfiles << tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
-          position = 0.0
-
-          fragments.each do |fragment|
-            fragment_filename = fragment.filename
-            fragment_duration = fragment.duration
-
-            if !index.zero? && (index % 80).zero?
-              run_command(cmd.join(' '))
-              cmd = %w/ecasound/
-            end
-
-            fragment_tmpfile =
-              fragment_filename.extname.downcase == '.wav' ? fragment_filename :
-              tmpdir + (Digest::MD5.hexdigest(fragment_filename) + '.wav')
-
-            unless fragment_tmpfile.exist?
-              run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_tmpfile}\"")
-            end
-
-            cmd <<
-              "-a:#{index} " +
-              "-i:" +
-              (fragment.reversed? ? 'reverse,' : '') +
-              "select,#{fragment.start},#{fragment_duration},\"#{fragment_tmpfile}\" " +
-              "-o:#{tmpfile} " +
-              "-y:#{position}"
-
-            index += 1
-            position += fragment_duration
-          end
-
-          run_command(cmd.join(' '))
+          fragments_to_file(fragments, tmpfile, tmpdir)
         end
 
-        if tmpfiles.size > 1
-          cmd = %w/ecasound/
-          tmpfile = tmpdir + 'tmp.wav'
-
-          tmpfiles.each_with_index do |tf, index|
-            cmd << "-a:#{index} -i:#{tf}"
-          end
-
-          cmd << "-a:all -o:#{tmpfile}"
-          run_command(cmd.join(' '))
-        else
-          tmpfile = tmpfiles.first
-        end
+        mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
 
         if filename.extname == '.wav'
-          File.rename(tmpfile, filename)
+          File.rename(final_tmpfile, filename)
         else
-          run_command("ffmpeg -i \"#{tmpfile}\" \"#{filename}\"")
+          run_command("ffmpeg -i \"#{final_tmpfile}\" \"#{filename}\"")
         end
       end
     end

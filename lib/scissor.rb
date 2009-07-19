@@ -44,7 +44,7 @@ module Scissor
       writer = Scissor::Writer.new
 
       scissor_array.each do |scissor|
-        writer.add_fragments(scissor.fragments)
+        writer.add_track(scissor.fragments)
       end
 
       writer.to_file(filename, options)
