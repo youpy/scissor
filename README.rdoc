@@ -31,41 +31,41 @@ supported file format:
 
 == Synopsis
 
-instanciate
+=== instanciate
 
  foo = Scissor('foo.mp3')
  bar = Scissor('bar.wav')
   
-concat
+=== concat
 
  foo + bar > 'foobar.mp3'
 
-slice + concat
+=== slice + concat
 
  foo[10, 1] + bar[2, 3] > 'slicefoobar.mp3'
 
-slice + concat + loop
+=== slice + concat + loop
 
  (foo[10, 1] + bar[2, 3]) * 4 > 'slicefoobarloop.mp3'
 
-split
+=== split
 
  (Scissor('sequence.mp3') / 16).first.to_file('split.mp3')
 
-replace first 10 seconds with 30 seconds of silence
+=== replace first 10 seconds with 30 seconds of silence
 
  foo.replace(0, 10, Scissor.silence(30)).to_file('replace.mp3')
 
-sequence + loop
+=== sequence + loop
 
  seq = Scissor.sequence('x y  xyz', 0.2)
  seq.apply(:x => foo, :y => Proc.new { bar }, :z => foo.reverse) * 4 > 'sequence.wav'
 
-half the pitch
+=== half the pitch
 
  foo.pitch(50)
 
-mix
+=== mix
 
  Scissor.mix([foo, bar], 'mix.mp3')
 
