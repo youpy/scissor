@@ -31,7 +31,7 @@ supported file format:
 
 == Synopsis
 
-=== instanciate
+=== instantiate
 
  foo = Scissor('foo.mp3')
  bar = Scissor('bar.wav')
