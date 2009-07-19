@@ -1,6 +1,3 @@
-require 'digest/md5'
-require 'pathname'
-
 module Scissor
   class Chunk
     class Error < StandardError; end

@@ -1,3 +1,5 @@
+require 'digest/md5'
+require 'pathname'
 require 'open4'
 require 'temp_dir'
 
