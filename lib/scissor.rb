@@ -39,5 +39,17 @@ module Scissor
         m + scissor
       end
     end
+
+    def mix(scissor_array, filename, options = {})
+      writer = Scissor::Writer.new
+
+      scissor_array.each do |scissor|
+        writer.add_fragments(scissor.fragments)
+      end
+
+      writer.to_file(filename, options)
+
+      Scissor(filename)
+    end
   end
 end

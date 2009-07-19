@@ -53,6 +53,9 @@ supported file format:
 	 seq = Scissor.sequence('x y  xyz', 0.2)
 	 seq.apply(:x => foo, :y => Proc.new { bar }, :z => foo.reverse) * 4 > 'sequence.wav'
 
+   # mix
+   Scissor.mix([foo, bar], 'mix.mp3')
+
 == Copyright
 
 Author:: youpy <youpy@buycheapviagraonlinenow.com>

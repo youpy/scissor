@@ -165,6 +165,15 @@ describe Scissor do
     scissor.fragments[0].duration.should eql(120.0)
   end
 
+  it "should mix instances of scissor" do
+    a = @mp3.slice(0, 120)
+    b = @mp3.slice(150, 20)
+
+    scissor = Scissor.mix([a, b], '/tmp/scissor-test/out.mp3')
+    scissor.should be_an_instance_of(Scissor::Chunk)
+    scissor.duration.should eql(120.05875)
+    scissor.fragments.size.should eql(1)
+  end
 
   it "should raise error if replaced range is out of duration" do
     lambda {

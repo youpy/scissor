@@ -46,11 +46,12 @@ module Scissor
         tmpdir = Pathname.new(dir)
         tmpfile = tmpdir + 'tmp.wav'
         cmd = %w/ecasound/
+        index = 0
 
         @tracks.each do |fragments|
           position = 0.0
 
-          fragments.each_with_index do |fragment, index|
+          fragments.each do |fragment|
             fragment_filename = fragment.filename
             fragment_duration = fragment.duration
 
@@ -75,6 +76,7 @@ module Scissor
               "-o:#{tmpfile} " +
               "-y:#{position}"
 
+            index += 1
             position += fragment_duration
           end
         end
