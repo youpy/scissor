@@ -227,16 +227,16 @@ describe Scissor do
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
         :overwrite => false)
-    }.should raise_error(Scissor::Chunk::FileExists)
+    }.should raise_error(Scissor::Writer::FileExists)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::Chunk::FileExists)
+    }.should raise_error(Scissor::Writer::FileExists)
   end
 
   it "should raise error if no fragment are given" do
     lambda {
       Scissor().to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::Chunk::EmptyFragment)
+    }.should raise_error(Scissor::Writer::EmptyFragment)
   end
 end

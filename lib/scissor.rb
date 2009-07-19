@@ -2,6 +2,7 @@ require 'scissor/chunk'
 require 'scissor/fragment'
 require 'scissor/sound_file'
 require 'scissor/sequence'
+require 'scissor/writer'
 
 def Scissor(*args)
   Scissor::Chunk.new(*args)
