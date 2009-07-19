@@ -1,16 +1,8 @@
 require 'digest/md5'
 require 'pathname'
-require 'logger'
 
 module Scissor
   class Chunk
-    @logger = Logger.new(STDOUT)
-    @logger.level = Logger::INFO
-
-    class << self
-      attr_accessor :logger
-    end
-
     class Error < StandardError; end
     class EmptyFragment < Error; end
     class OutOfDuration < Error; end
@@ -178,10 +170,6 @@ module Scissor
 
     def >>(filename)
       to_file(filename, :overwrite => true)
-    end
-
-    def logger
-      self.class.logger
     end
   end
 end

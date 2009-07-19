@@ -1,15 +1,9 @@
-require 'logger'
 require 'open4'
 require 'temp_dir'
 
 module Scissor
   class Writer
-    @logger = Logger.new(STDOUT)
-    @logger.level = Logger::INFO
-
-    class << self
-      attr_accessor :logger
-    end
+    include Loggable
 
     class Error < StandardError; end
     class FileExists < Error; end
@@ -113,10 +107,6 @@ module Scissor
       end
 
       return result
-    end
-
-    def logger
-      self.class.logger
     end
   end
 end

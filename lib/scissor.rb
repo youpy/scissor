@@ -1,3 +1,4 @@
+require 'scissor/loggable'
 require 'scissor/chunk'
 require 'scissor/fragment'
 require 'scissor/sound_file'
@@ -8,20 +9,35 @@ def Scissor(*args)
   Scissor::Chunk.new(*args)
 end
 
+require 'logger'
+
 module Scissor
-  def self.silence(duration)
-    Scissor(File.dirname(__FILE__) + '/../data/silence.mp3').
-      slice(0, 1).
-      fill(duration)
+  @logger = Logger.new(STDOUT)
+  @logger.level = Logger::INFO
+
+  class << self
+    attr_accessor :logger
   end
 
-  def self.sequence(*args)
-    Scissor::Sequence.new(*args)
+  def logger
+    self.class.logger
   end
 
-  def self.join(scissor_array)
-    scissor_array.inject(Scissor()) do |m, scissor|
-      m + scissor
+  class << self
+    def silence(duration)
+      Scissor(File.dirname(__FILE__) + '/../data/silence.mp3').
+        slice(0, 1).
+        fill(duration)
+    end
+
+    def sequence(*args)
+      Scissor::Sequence.new(*args)
+    end
+
+    def join(scissor_array)
+      scissor_array.inject(Scissor()) do |m, scissor|
+        m + scissor
+      end
     end
   end
 end
