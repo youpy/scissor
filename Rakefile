@@ -17,7 +17,7 @@ DESCRIPTION       = "utility to chop sound files"
 RUBYFORGE_PROJECT = "scissor"
 HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
 BIN_FILES         = %w(  )
-VERS              = "0.0.19"
+VERS              = "0.0.20"
 
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
@@ -86,7 +86,6 @@ end
 task :uninstall => [:clean] do
   sh %{sudo gem uninstall #{NAME}}
 end
-
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'html'
