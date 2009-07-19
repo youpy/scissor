@@ -44,11 +44,12 @@ module Scissor
 
       TempDir.create do |dir|
         tmpdir = Pathname.new(dir)
-        tmpfile = tmpdir + 'tmp.wav'
         cmd = %w/ecasound/
         index = 0
+        tmpfiles = []
 
-        @tracks.each do |fragments|
+        @tracks.each_with_index do |fragments, track_index|
+          tmpfiles << tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
           position = 0.0
 
           fragments.each do |fragment|
@@ -79,9 +80,23 @@ module Scissor
             index += 1
             position += fragment_duration
           end
+
+          run_command(cmd.join(' '))
         end
 
-        run_command(cmd.join(' '))
+        if tmpfiles.size > 1
+          cmd = %w/ecasound/
+          tmpfile = tmpdir + 'tmp.wav'
+
+          tmpfiles.each_with_index do |tf, index|
+            cmd << "-a:#{index} -i:#{tf}"
+          end
+
+          cmd << "-a:all -o:#{tmpfile}"
+          run_command(cmd.join(' '))
+        else
+          tmpfile = tmpfiles.first
+        end
 
         if filename.extname == '.wav'
           File.rename(tmpfile, filename)
