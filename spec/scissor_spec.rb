@@ -180,7 +180,7 @@ describe Scissor do
 
     scissor = Scissor.mix([a, b], '/tmp/scissor-test/out.mp3')
     scissor.should be_an_instance_of(Scissor::Chunk)
-    scissor.duration.should eql(120.05875)
+    scissor.duration.should be_close(120, 0.1)
     scissor.fragments.size.should eql(1)
   end
 
@@ -194,63 +194,63 @@ describe Scissor do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor::Chunk)
-    result.duration.to_i.should eql(140)
+    result.duration.should be_close(140, 0.1)
   end
 
   it "should write to mp3 file" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.duration.to_i.should eql(140)
+    result.duration.should be_close(140, 0.1)
   end
 
   it "should write to wav file" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.wav')
-    result.duration.to_i.should eql(140)
+    result.duration.should be_close(140, 0.1)
   end
 
   it "should write to file using 'greater than' operator" do
     result = @mp3.slice(0, 120) + @mp3.slice(150, 20) > '/tmp/scissor-test/out.wav'
-    result.duration.to_i.should eql(140)
+    result.duration.should be_close(140, 0.1)
   end
 
   it "should write to file with many fragments" do
     scissor = (@mp3.slice(0, 120) / 100).inject(Scissor()){|m, s| m + s } + @mp3.slice(10, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor::Chunk)
-    result.duration.to_i.should eql(140)
+    result.duration.should be_close(140, 0.1)
   end
 
   it "should overwrite existing file" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.to_i.should eql(10)
+    result.duration.should be_close(10, 0.1)
 
     result = @mp3.slice(0, 12).to_file('/tmp/scissor-test/out.mp3',
       :overwrite => true)
-    result.duration.to_i.should eql(12)
+    result.duration.should be_close(12, 0.1)
   end
 
   it "should overwrite existing file using double 'greater than' oprator" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.to_i.should eql(10)
+    result.duration.should be_close(10, 0.1)
 
     result = @mp3.slice(0, 12) >> '/tmp/scissor-test/out.mp3'
-    result.duration.to_i.should eql(12)
+    result.duration.should be_close(12, 0.1)
   end
 
   it "should write to file in the variable pitch" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
 
     result = scissor.pitch(50).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.to_i.should eql(280)
+    result.duration.should be_close(280, 0.1)
 
     result = scissor.pitch(200).to_file('/tmp/scissor-test/out.mp3', :overwrite => true)
-    result.duration.to_i.should eql(70)
+    result.duration.should be_close(70, 0.1)
   end
 
   it "should raise error if overwrite option is false" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.to_i.should eql(10)
+    result.duration.should be_close(10, 0.1)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
