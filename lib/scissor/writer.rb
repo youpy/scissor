@@ -78,7 +78,8 @@ module Scissor
       end
 
       options = {
-        :overwrite => false
+        :overwrite => false,
+        :bitrate => '128k'
       }.merge(options)
 
       if filename.exist?
@@ -103,7 +104,7 @@ module Scissor
         if filename.extname == '.wav'
           File.rename(final_tmpfile, filename)
         else
-          run_command("ffmpeg -i \"#{final_tmpfile}\" \"#{filename}\"")
+          run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" \"#{filename}\"")
         end
       end
     end
