@@ -15,7 +15,7 @@ AUTHOR            = "youpy"
 EMAIL             = "youpy@buycheapviagraonlinenow.com"
 DESCRIPTION       = "utility to chop sound files"
 RUBYFORGE_PROJECT = "scissor"
-HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
+HOMEPATH          = "http://github.com/youpy/scissor"
 BIN_FILES         = %w(  )
 VERS              = "0.0.22"
 

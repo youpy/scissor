@@ -22,8 +22,10 @@ supported file format:
 
 === Gem Installation
 
- gem sources -a http://gems.github.com/  
- gem install youpy-scissor
+ gem update --system
+ gem install gemcutter
+ gem tumble
+ gem install scissor
 
 == Features/Problems
 
