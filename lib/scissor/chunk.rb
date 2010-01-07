@@ -4,9 +4,10 @@ module Scissor
     class EmptyFragment < Error; end
     class OutOfDuration < Error; end
 
-    attr_reader :fragments
+    attr_reader :fragments, :type
 
     def initialize(filename = nil)
+      @type = :sound
       @fragments = []
 
       if filename
@@ -69,7 +70,8 @@ module Scissor
     alias << concat
 
     def +(other)
-      new_instance = Scissor()
+#      new_instance = Scissor()
+      new_instance = self.class.new
       new_instance.add_fragments(@fragments + other.fragments)
       new_instance
     end
@@ -178,6 +180,15 @@ module Scissor
 
     def >>(filename)
       to_file(filename, :overwrite => true)
+    end
+
+    def to_videochunk(video)
+      v = ScissorVideo()
+      v.fragments[0] = Scissor::Fragment.new(
+        video,
+        @fragments[0].start,
+        @fragments[0].duration)
+      v
     end
   end
 end

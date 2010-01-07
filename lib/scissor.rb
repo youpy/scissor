@@ -6,12 +6,36 @@ require 'scissor/sequence'
 require 'scissor/writer'
 
 require 'scissor/command'
-%w[ecasound ffmpeg].each do |c|
+%w[ecasound ffmpeg mencoder].each do |c|
   require "scissor/command/#{c}"
 end
 
+require 'scissor/video_chunk'
+require 'scissor/video_file'
+require 'scissor/float'
+
+# TODO: cleaning
+def ScissorVideo(*args)
+  Scissor::VideoChunk.new(*args)
+end
+
+#def Scissor(*args)
+#  Scissor::Chunk.new(*args)
+#end
 def Scissor(*args)
-  Scissor::Chunk.new(*args)
+#  Scissor::Chunk.new(*args)
+  if args.length == 0
+    Scissor::Chunk.new(*args)
+  else
+    filename = args[0]
+    f = Pathname.new(filename)
+    ext = f.extname.sub(/^\./, '').downcase
+    if Scissor::SoundFile::SUPPORTED_FORMATS.include?(ext)
+      Scissor::Chunk.new(filename)
+    else
+      ScissorVideo(filename)
+    end
+  end
 end
 
 require 'logger'
@@ -59,6 +83,18 @@ module Scissor
       writer.to_file(filename, options)
 
       Scissor(filename)
+    end
+  end
+
+
+  # TODO: cleaning
+  class << self
+    def ffmpeg(*args)
+      FFmpeg.new(*args)
+    end
+
+    def mencoder(*args)
+      Mencoder.new(*args)
     end
   end
 end
