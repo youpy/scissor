@@ -16,7 +16,7 @@ module Scissor
 
     def initialize(args)
       @command = args[:command]
-      @work_dir = args[:work_dir] || Scissor.workspace || Dir.tmpdir + "/scissor-video-work-" + $$.to_s
+      @work_dir = args[:work_dir] || Scissor.workspace || Dir.tmpdir + "/scissor-work-" + $$.to_s
       @work_dir = Pathname.new(@work_dir)
       @work_dir.mkpath
     end

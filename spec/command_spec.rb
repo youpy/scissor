@@ -16,14 +16,14 @@ describe Scissor::Command do
 
   it "should make work_dir" do
     command = Scissor::Command.new({})
-    command.work_dir.should eql(Pathname.new(Dir.tmpdir + "/scissor-video-work-" + $$.to_s))
+    command.work_dir.should eql(Pathname.new(Dir.tmpdir + "/scissor-work-" + $$.to_s))
     command.work_dir.should be_exist
     command.command.should be_nil
   end
 
   it "should set command variable" do
     command = Scissor::Command.new({:command => 'ls'})
-    command.work_dir.should eql(Pathname.new(Dir.tmpdir + "/scissor-video-work-" + $$.to_s))
+    command.work_dir.should eql(Pathname.new(Dir.tmpdir + "/scissor-work-" + $$.to_s))
     command.work_dir.should be_exist
     command.command.should eql('ls')
   end

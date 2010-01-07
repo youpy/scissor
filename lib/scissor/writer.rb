@@ -22,14 +22,6 @@ module Scissor
       @tracks << fragments
     end
 
-    def fragments_to_file(fragments, outfile, tmpdir)
-      @ecasound.fragments_to_file fragments, outfile, tmpdir
-    end
-
-    def mix_files(filenames, outfile)
-      @ecasound.mix_files filenames, outfile
-    end
-
     def to_file(filename, options)
       filename = Pathname.new(filename)
 
@@ -56,10 +48,10 @@ module Scissor
 
         @tracks.each_with_index do |fragments, track_index|
           tmpfiles << tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
-          fragments_to_file(fragments, tmpfile, tmpdir)
+          @ecasound.fragments_to_file fragments, tmpfile, tmpdir
         end
 
-        mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
+        @ecasound.mix_files tmpfiles, final_tmpfile = tmpdir + 'tmp.wav'
 
         if filename.extname == '.wav'
           File.rename(final_tmpfile, filename)

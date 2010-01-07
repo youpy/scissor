@@ -8,10 +8,11 @@ module Scissor
       which('ecasound')
     end
 
-    def fragments_to_file(fragments, outfile, tmpdir)
+    def fragments_to_file(fragments, outfile, tmpdir=nil)
+      tmpdir ||= @work_dir
       position = 0.0
       params = []
-      ffmpeg = Scissor::FFmpeg.new
+      ffmpeg = Scissor::FFmpeg.new which('ffmpeg'), @work_dir
 
       fragments.each_with_index do |fragment, index|
         fragment_filename = fragment.filename
