@@ -1,7 +1,6 @@
 module Scissor
 
   class VideoChunk < Chunk
-    attr_reader :fragments
 
     def initialize(filename = nil)
       @type = :video
@@ -26,8 +25,6 @@ module Scissor
         :overwrite => false,
         :save_workfiles => false
       }.merge(options)
-
-      filename = Pathname.new(filename)
 
       if filename.exist?
         if options[:overwrite]

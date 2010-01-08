@@ -56,6 +56,11 @@ module Scissor
     self.class.workspace
   end
 
+  class Error < StandardError; end
+  class MethodForSound < Error; end
+  class MethodForVideo < Error; end
+  class InconsistentChunkType < Error; end
+
   class << self
     def silence(duration)
       Scissor(File.dirname(__FILE__) + '/../data/silence.mp3').
@@ -77,6 +82,7 @@ module Scissor
       writer = Scissor::Writer.new
 
       scissor_array.each do |scissor|
+        raise MethodForSound unless scissor.type == :sound
         writer.add_track(scissor.fragments)
       end
 
