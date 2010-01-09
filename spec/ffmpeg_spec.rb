@@ -22,16 +22,52 @@ describe Scissor::FFmpeg do
     @ffmpeg.command.should include 'ffmpeg'
   end
 
+  describe "#run_ffmpeg" do
+    it "should raise error if unknwon format" do
+      lambda {
+        @ffmpeg.run_ffmpeg({:input_video => 'unkwonformat.csv'})
+      }.should raise_error(Scissor::Command::UnknownFormat)
+    end
+
+    it "should raise error if file not supported" do
+      output_file = @tmp_dir + '/cut.hoge'
+      lambda {
+        @ffmpeg.encode({
+                         :input_video => fixture('sample.flv'),
+                         :output_video => output_file,
+                         :vcodec => 'hoge',
+                         :acodec => 'fuga'
+                       })
+          
+      }.should raise_error(Scissor::Command::UnknownFormat)
+    end
+
+    it "should raise error if codec not supported" do
+      output_file = @tmp_dir + '/cut.avi'
+      lambda {
+        @ffmpeg.encode({
+                         :input_video => fixture('sample.flv'),
+                         :output_video => output_file,
+                         :vcodec => 'hoge',
+                       })
+          
+      }.should raise_error(Scissor::FFmpeg::UnknownCodec)
+
+      lambda {
+        @ffmpeg.encode({
+                         :input_video => fixture('sample.flv'),
+                         :output_video => output_file,
+                         :acodec => 'fuga',
+                       })
+          
+      }.should raise_error(Scissor::FFmpeg::UnknownCodec)
+    end
+  end
+
   describe "#prepare" do
     it "should convert flv to avi" do
       result = @ffmpeg.prepare({:input_video => fixture('sample.flv')})
       result.to_s.should match /.*\.avi/
-    end
-
-    it "should raise error if unknwon format" do
-      lambda {
-        @ffmpeg.prepare({:input_video => 'unkwonformat.csv'})
-      }.should raise_error(Scissor::Command::UnknownFormat)
     end
   end
 

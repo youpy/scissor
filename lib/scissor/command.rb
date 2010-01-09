@@ -32,21 +32,21 @@ module Scissor
       retry_count = 0
       retry_max = 3
       status = nil
+      stderr = ''
       while (retry_count < retry_max) do
         begin
           Timeout.timeout(10) do
             status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
               result = stdout.read
-              err = ''
               unless ignore_error
                 begin
-                  err = stderr.read
+                  stderr = stderr.read
                 rescue => e
                   p e
                 end
-                logger.debug(err)
-                if force && err
-                  result = err
+                logger.debug(stderr)
+                if force && stderr
+                  result = stderr
                 end
               end
             end
@@ -62,7 +62,7 @@ module Scissor
       end
 
       if !status.nil? && status.exitstatus != 0 && !force
-        raise CommandFailed.new(cmd)
+        raise CommandFailed, "cmd:#{cmd}, err:#{stderr}"
       end
 
       return result

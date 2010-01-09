@@ -14,12 +14,6 @@ describe Scissor::VideoFile do
   after do
   end
 
-  it "raise error if unknown file format" do
-    lambda {
-      Scissor::VideoFile.new(fixture('foo.bar'))
-    }.should raise_error(Scissor::VideoFile::UnknownFormat)
-  end
-
   it "should get video duration" do
     @video_file.length.should eql(27.027)
   end
