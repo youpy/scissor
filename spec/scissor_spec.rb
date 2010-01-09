@@ -184,6 +184,15 @@ describe Scissor do
     scissor.fragments.size.should eql(1)
   end
 
+  it "should raise error if non-sound-chunk was mixed" do
+    a = @mp3.slice(0, 120)
+    b = ScissorVideo(fixture('sample.flv'))
+
+    lambda {
+      Scissor.mix([a, b], '/tmp/scissor-test/out.mp3')
+    }.should raise_error(Scissor::MethodForSound)
+  end
+
   it "should raise error if replaced range is out of duration" do
     lambda {
       @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))
@@ -255,16 +264,16 @@ describe Scissor do
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
         :overwrite => false)
-    }.should raise_error(Scissor::Writer::FileExists)
+    }.should raise_error(Scissor::AudioMixer::FileExists)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::Writer::FileExists)
+    }.should raise_error(Scissor::AudioMixer::FileExists)
   end
 
   it "should raise error if no fragment are given" do
     lambda {
       Scissor().to_file('/tmp/scissor-test/out.mp3')
-    }.should raise_error(Scissor::Writer::EmptyFragment)
+    }.should raise_error(Scissor::AudioMixer::EmptyFragment)
   end
 end

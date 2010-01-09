@@ -3,7 +3,7 @@ require 'scissor/chunk'
 require 'scissor/fragment'
 require 'scissor/sound_file'
 require 'scissor/sequence'
-require 'scissor/writer'
+require 'scissor/audiomixer'
 
 require 'scissor/command'
 %w[ecasound ffmpeg mencoder].each do |c|
@@ -79,14 +79,14 @@ module Scissor
     end
 
     def mix(scissor_array, filename, options = {})
-      writer = Scissor::Writer.new
+      mixer = Scissor::AudioMixer.new
 
       scissor_array.each do |scissor|
         raise MethodForSound unless scissor.type == :sound
-        writer.add_track(scissor.fragments)
+        mixer.add_track(scissor.fragments)
       end
 
-      writer.to_file(filename, options)
+      mixer.to_file(filename, options)
 
       Scissor(filename)
     end

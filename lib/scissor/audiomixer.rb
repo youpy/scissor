@@ -4,7 +4,7 @@ require 'open4'
 require 'temp_dir'
 
 module Scissor
-  class Writer
+  class AudioMixer
     include Loggable
 
     class Error < StandardError; end
