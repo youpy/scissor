@@ -8,7 +8,6 @@ include FileUtils
 
 describe Scissor::FFmpeg do
   before do
-#    @video = ScissorVideo(fixture('sample.flv'))
     @ffmpeg = Scissor::FFmpeg.new
     @tmp_dir = "#{Dir.tmpdir}/scissor-video-test"
     mkdir @tmp_dir

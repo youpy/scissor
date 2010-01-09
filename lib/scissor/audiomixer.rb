@@ -14,8 +14,6 @@ module Scissor
 
     def initialize
       @tracks = []
-      @ecasound = Scissor::Ecasound.new
-      @ffmpeg = Scissor::FFmpeg.new
     end
 
     def add_track(fragments)
@@ -48,15 +46,15 @@ module Scissor
 
         @tracks.each_with_index do |fragments, track_index|
           tmpfiles << tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
-          @ecasound.fragments_to_file fragments, tmpfile, tmpdir
+          Scissor.ecasound.fragments_to_file fragments, tmpfile, tmpdir
         end
 
-        @ecasound.mix_files tmpfiles, final_tmpfile = tmpdir + 'tmp.wav'
+        Scissor.ecasound.mix_files tmpfiles, final_tmpfile = tmpdir + 'tmp.wav'
 
         if filename.extname == '.wav'
           File.rename(final_tmpfile, filename)
         else
-          @ffmpeg.convert final_tmpfile, filename, options
+          Scissor.ffmpeg.convert final_tmpfile, filename, options
         end
       end
     end

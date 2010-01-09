@@ -19,11 +19,7 @@ def ScissorVideo(*args)
   Scissor::VideoChunk.new(*args)
 end
 
-#def Scissor(*args)
-#  Scissor::Chunk.new(*args)
-#end
 def Scissor(*args)
-#  Scissor::Chunk.new(*args)
   if args.length == 0
     Scissor::Chunk.new(*args)
   else
@@ -95,6 +91,10 @@ module Scissor
 
   # TODO: cleaning
   class << self
+    def ecasound(*args)
+      Ecasound.new(*args)
+    end
+
     def ffmpeg(*args)
       FFmpeg.new(*args)
     end
