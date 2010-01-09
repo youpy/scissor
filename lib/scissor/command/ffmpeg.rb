@@ -30,11 +30,6 @@ module Scissor
       run_ffmpeg "#{params}-i #{infile} #{outfile}"
     end
 
-
-    #################
-    # for video
-    # TODO: cleaning
-
     def prepare(args)
       # flv2avi
       tmpfile = Pathname.new(args[:input_video])
@@ -77,7 +72,6 @@ module Scissor
     end
 
     def strip_audio(video)
-      # return Scissor::Chunk(Audio)
       tmpfile = Pathname.new(video)
       tmpfile = @work_dir + (tmpfile.basename.to_s.split('.')[0] + '.mp3')
       unless tmpfile.exist?

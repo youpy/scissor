@@ -14,7 +14,6 @@ require 'scissor/video_chunk'
 require 'scissor/video_file'
 require 'scissor/float'
 
-# TODO: cleaning
 def ScissorVideo(*args)
   Scissor::VideoChunk.new(*args)
 end
@@ -55,7 +54,6 @@ module Scissor
   class Error < StandardError; end
   class MethodForSound < Error; end
   class MethodForVideo < Error; end
-  class InconsistentChunkType < Error; end
 
   class << self
     def silence(duration)
@@ -86,11 +84,8 @@ module Scissor
 
       Scissor(filename)
     end
-  end
 
 
-  # TODO: cleaning
-  class << self
     def ecasound(*args)
       Ecasound.new(*args)
     end

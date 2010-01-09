@@ -70,7 +70,6 @@ module Scissor
     alias << concat
 
     def +(other)
-#      new_instance = Scissor()
       new_instance = self.class.new
       new_instance.add_fragments(@fragments + other.fragments)
       new_instance
