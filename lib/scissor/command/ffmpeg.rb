@@ -5,11 +5,10 @@ module Scissor
     class Error < StandardError; end
     class UnknownCodec < Error; end
 
-    def initialize(command = which('ffmpeg'), work_dir = nil)
+    def initialize(command = 'ffmpeg', work_dir = nil, save_work_dir = false)
       super(:command => command,
-            :work_dir => work_dir
-            )
-      which('ffmpeg')
+        :work_dir => work_dir,
+        :options => { :save_work_dir => save_work_dir })
     end
 
     def run_ffmpeg(*args)
@@ -17,7 +16,7 @@ module Scissor
         run *args
       rescue CommandFailed => e
         raise UnknownFormat if e.message =~ /Unable to find a suitable output format for/
-        raise UnknownCodec if e.message =~ /Unknown encoder/
+        raise UnknownCodec if e.message =~ /Unknown (encoder|codec)/
       end
     end
 
@@ -62,7 +61,7 @@ module Scissor
     def get_duration(video)
       result = run_ffmpeg("-i #{video}", true)
       duration = 0
-      if result.match(/.*?Duration: (\d{2}):(\d{2}):(\d{2}).(\d{2}), start: .*?, bitrate: .*/m)
+      if result.match(/.*?Duration: (\d{2}):(\d{2}):(\d{2}).(\d{1,2}), start: .*?, bitrate: .*/m)
         duration = $1.to_i * 60 * 60 +
           $2.to_i * 60 +
           $3.to_i +

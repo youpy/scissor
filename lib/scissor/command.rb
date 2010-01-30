@@ -15,18 +15,23 @@ module Scissor
     class UnknownFormat < Error; end
 
     def initialize(args)
-      @command = args[:command]
+      default_options = {
+        :save_work_dir => false
+      }
+
+      @options = default_options.merge(args[:options] || {})
       @work_dir = args[:work_dir] || Scissor.workspace || Dir.tmpdir + "/scissor-work-" + $$.to_s
       @work_dir = Pathname.new(@work_dir)
       @work_dir.mkpath
+      @command = args[:command] =~ /\// ? args[:command] : which(args[:command])
     end
 
     def cleanup
       @work_dir.rmtree if @work_dir.exist?
     end
 
-    def _run_command(cmd, force = false, ignore_error = false)
-      logger.debug("run_command: #{cmd}")
+    def _run_command(full_command, force = false, ignore_error = false)
+      logger.debug("run_command: #{full_command}")
 
       result = ''
       retry_count = 0
@@ -36,13 +41,13 @@ module Scissor
       while (retry_count < retry_max) do
         begin
           Timeout.timeout(10) do
-            status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
+            status = Open4.popen4(full_command) do |pid, stdin, stdout, stderr|
               result = stdout.read
               unless ignore_error
                 begin
                   stderr = stderr.read
                 rescue => e
-                  p e
+                  logger.debug(e)
                 end
                 logger.debug(stderr)
                 if force && stderr
@@ -55,22 +60,24 @@ module Scissor
         rescue Timeout::Error => e
           retry_count = retry_count + 1
           if retry_count == retry_max
-            logger.debug("RETRY MAX: #{cmd}")
+            logger.debug("RETRY MAX: #{full_command}")
             break
           end
+        ensure
+          cleanup unless @options[:save_work_dir]
         end
       end
 
       if !status.nil? && status.exitstatus != 0 && !force
-        raise CommandFailed, "cmd:#{cmd}, err:#{stderr}"
+        raise CommandFailed, "cmd:#{full_command}, err:#{stderr}"
       end
 
       return result
     end
 
     def _run_hash(option, force = false, ignore_error = false)
-      cmd = [@command, option.keys.map {|k| "#{k} #{option[k]}"}].flatten.join(' ')
-      _run_command(cmd, force, ignore_error)
+      option_str = [@command, [option.keys.map {|k| "#{k} #{option[k]}"}].flatten].join(' ')
+      _run_command(option_str, force, ignore_error)
     end
 
     # パラメタ指定順番意識するものもあるので

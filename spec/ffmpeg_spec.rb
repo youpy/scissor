@@ -8,7 +8,7 @@ include FileUtils
 
 describe Scissor::FFmpeg do
   before do
-    @ffmpeg = Scissor::FFmpeg.new
+    @ffmpeg = Scissor::FFmpeg.new('ffmpeg', nil, true)
     @tmp_dir = "#{Dir.tmpdir}/scissor-video-test"
     mkdir @tmp_dir
   end
@@ -19,7 +19,7 @@ describe Scissor::FFmpeg do
   end
 
   it "should set command to 'ffmpeg'" do
-    @ffmpeg.command.should include 'ffmpeg'
+    @ffmpeg.command.should include('ffmpeg')
   end
 
   describe "#run_ffmpeg" do
@@ -35,8 +35,6 @@ describe Scissor::FFmpeg do
         @ffmpeg.encode({
                          :input_video => fixture('sample.flv'),
                          :output_video => output_file,
-                         :vcodec => 'hoge',
-                         :acodec => 'fuga'
                        })
           
       }.should raise_error(Scissor::Command::UnknownFormat)
@@ -67,7 +65,7 @@ describe Scissor::FFmpeg do
   describe "#prepare" do
     it "should convert flv to avi" do
       result = @ffmpeg.prepare({:input_video => fixture('sample.flv')})
-      result.to_s.should match /.*\.avi/
+      result.to_s.should match(/.*\.avi/)
     end
   end
 
@@ -94,7 +92,7 @@ describe Scissor::FFmpeg do
   describe "#get_duration" do
     it "should return duration" do
       # sec
-      @ffmpeg.get_duration(fixture('sample.flv')).should eql(27.027)
+      @ffmpeg.get_duration(fixture('sample.flv')).should be_close(27, 0.1)
     end
   end
 

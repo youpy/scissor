@@ -1,11 +1,10 @@
 module Scissor
 
   class Ecasound < Command
-    def initialize(command = which('ecasound'), work_dir = nil)
+    def initialize(command = 'ecasound', work_dir = nil)
       super(:command => command,
             :work_dir => work_dir
             )
-      which('ecasound')
     end
 
     def fragments_to_file(fragments, outfile, tmpdir=nil)

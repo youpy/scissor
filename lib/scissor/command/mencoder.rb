@@ -1,10 +1,10 @@
 module Scissor
 
   class Mencoder < Command
-    def initialize(command = which('mencoder'), work_dir = nil)
+    def initialize(command = 'mencoder', work_dir = nil, save_work_dir = false)
       super(:command => command,
-            :work_dir => work_dir
-            )
+        :work_dir => work_dir,
+        :options => { :save_work_dir => save_work_dir })
     end
 
     def concat(args)

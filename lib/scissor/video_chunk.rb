@@ -23,7 +23,7 @@ module Scissor
 
       options = {
         :overwrite => false,
-        :save_workfiles => false
+        :save_work_dir => false
       }.merge(options)
 
       if filename.exist?
@@ -35,13 +35,12 @@ module Scissor
       end
 
       concat_files = []
-      ffmpeg = Scissor.ffmpeg
+      ffmpeg = Scissor.ffmpeg('ffmpeg', nil, options[:save_work_dir])
 
       position = 0.0
       tmpdir = ffmpeg.work_dir
       tmpfile = tmpdir + 'tmp.avi'
 
-      concat_count = 0
       begin
         @fragments.each_with_index do |fragment, index|
           fragment_filename = fragment.filename
@@ -51,27 +50,25 @@ module Scissor
 
           unless fragment_tmpfile.exist?
             ffmpeg.cut({
-                         :input_video => fragment_filename,
-                         :output_video => fragment_tmpfile,
-                         :start => fragment.start,
-                         :duration => fragment_duration
+                :input_video => fragment_filename,
+                :output_video => fragment_tmpfile,
+                :start => fragment.start,
+                :duration => fragment_duration
             })
             concat_files.push fragment_tmpfile
           end
           position += fragment_duration
         end
 
-        Scissor.mencoder.concat({
-                                  :input_videos => concat_files,
-                                  :output_video => tmpfile
+        Scissor.mencoder('mencoder', nil, options[:save_work_dir]).concat({
+            :input_videos => concat_files,
+            :output_video => tmpfile
         })
 
         ffmpeg.encode({
-                        :input_video => tmpfile,
-                        :output_video => filename
+            :input_video => tmpfile,
+            :output_video => filename
         })
-      ensure
-        ffmpeg.cleanup unless options[:save_workfiles]
       end
 
       self.class.new(filename)

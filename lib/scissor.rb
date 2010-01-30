@@ -85,17 +85,16 @@ module Scissor
       Scissor(filename)
     end
 
-
     def ecasound(*args)
       Ecasound.new(*args)
     end
 
-    def ffmpeg(*args)
-      FFmpeg.new(*args)
+    def ffmpeg(command = 'ffmpeg', work_dir = nil, save_work_dir = true)
+      FFmpeg.new(command, work_dir, save_work_dir)
     end
 
-    def mencoder(*args)
-      Mencoder.new(*args)
+    def mencoder(command = 'mencoder', work_dir = nil, save_work_dir = true)
+      Mencoder.new(command, work_dir, save_work_dir)
     end
   end
 end

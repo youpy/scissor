@@ -15,6 +15,6 @@ describe Scissor::VideoFile do
   end
 
   it "should get video duration" do
-    @video_file.length.should eql(27.027)
+    @video_file.length.should be_close(27, 0.1)
   end
 end
