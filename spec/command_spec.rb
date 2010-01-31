@@ -26,7 +26,7 @@ describe Scissor::Command do
 
   describe "#_run_command" do
     before do
-      @ls_err = "ls: xxx: No such file or directory"
+      @ls_err = /ls: xxx.*: No such file or directory/
       @read_file = lambda {|file|
         f = open file
         begin
@@ -71,7 +71,7 @@ describe Scissor::Command do
       lambda {
         command._run_command('ls xxx')
       }.should raise_error(Scissor::Command::CommandFailed)
-      @read_file.call(file).should include(@ls_err)
+      @read_file.call(file).should match(@ls_err)
       
       Scissor.logger = _logger
       Scissor.logger.level = _level
@@ -88,7 +88,7 @@ describe Scissor::Command do
       lambda {
         command._run_command('ls xxx')
       }.should raise_error(Scissor::Command::CommandFailed)
-      @read_file.call(file).should_not include(@ls_err)
+      @read_file.call(file).should_not match(@ls_err)
       
       Scissor.logger = _logger
       Scissor.logger.level = _level
@@ -106,8 +106,8 @@ describe Scissor::Command do
       lambda {
         result = command._run_command('ls xxx', true)
       }.should_not raise_error(Scissor::Command::CommandFailed)
-      @read_file.call(file).should include(@ls_err)
-      result.should include(@ls_err)
+      @read_file.call(file).should match(@ls_err)
+      result.should match(@ls_err)
       
       Scissor.logger = _logger
       Scissor.logger.level = _level
