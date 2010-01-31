@@ -40,7 +40,7 @@ module Scissor
       stderr = ''
       while (retry_count < retry_max) do
         begin
-          Timeout.timeout(10) do
+          Timeout.timeout(100) do
             status = Open4.popen4(full_command) do |pid, stdin, stdout, stderr|
               result = stdout.read
               unless ignore_error
