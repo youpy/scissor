@@ -34,42 +34,40 @@ module Scissor
       logger.debug("run_command: #{full_command}")
 
       result = ''
-      retry_count = 0
-      retry_max = 3
       status = nil
-      stderr = ''
-      while (retry_count < retry_max) do
-        begin
-          Timeout.timeout(100) do
-            status = Open4.popen4(full_command) do |pid, stdin, stdout, stderr|
-              result = stdout.read
-              unless ignore_error
-                begin
-                  stderr = stderr.read
-                rescue => e
-                  logger.debug(e)
-                end
-                logger.debug(stderr)
-                if force && stderr
-                  result = stderr
-                end
+      error = ''
+
+      begin
+        status = Open4.popen4(full_command) do |pid, stdin, stdout, stderr|
+          stdin.close
+
+          ios = [stdout, stderr]
+
+          until ios.empty?
+            IO.select(ios)[0].each do |io|
+              case io
+              when stdout
+                result = io.read
+              when stderr
+                error = io.read
               end
+
+              ios.delete(io) if io.eof?
             end
           end
-          break
-        rescue Timeout::Error => e
-          retry_count = retry_count + 1
-          if retry_count == retry_max
-            logger.debug("RETRY MAX: #{full_command}")
-            break
+
+          logger.debug(error) unless ignore_error
+
+          if force && error
+            result = error
           end
-        ensure
-          cleanup unless @options[:save_work_dir]
         end
+      ensure
+        cleanup unless @options[:save_work_dir]
       end
 
       if !status.nil? && status.exitstatus != 0 && !force
-        raise CommandFailed, "cmd:#{full_command}, err:#{stderr}"
+        raise CommandFailed, "cmd:#{full_command}, err:#{error}"
       end
 
       return result
