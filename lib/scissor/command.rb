@@ -47,9 +47,9 @@ module Scissor
             IO.select(ios)[0].each do |io|
               case io
               when stdout
-                result = io.read
+                result += io.read
               when stderr
-                error = io.read
+                error += io.read
               end
 
               ios.delete(io) if io.eof?
@@ -58,7 +58,7 @@ module Scissor
 
           logger.debug(error) unless ignore_error
 
-          if force && error
+          if force && !error.empty?
             result = error
           end
         end
