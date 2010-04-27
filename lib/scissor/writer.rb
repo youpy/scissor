@@ -31,7 +31,7 @@ module Scissor
         fragment_filename = fragment.filename
         fragment_duration = fragment.duration
 
-        if !index.zero? && (index % 80).zero?
+        if !index.zero? && (index % 28).zero?
           run_command(cmd.join(' '))
           cmd = %w/ecasound/
         end
