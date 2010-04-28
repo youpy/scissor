@@ -118,6 +118,7 @@ module Scissor
 
       result = ''
       status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
+        stdin.close
         logger.debug(stderr.read)
         result = stdout.read
       end
