@@ -53,3 +53,19 @@ module Scissor
     end
   end
 end
+
+# for ruby 1.9
+if IO.instance_methods.include? :getbyte
+  class << Riff::Reader::Chunk
+    alias :read_bytes_to_int_original :read_bytes_to_int
+    def read_bytes_to_int file, bytes
+      require 'delegate'
+      file_delegate = SimpleDelegator.new(file)
+      def file_delegate.getc
+        getbyte
+      end
+      read_bytes_to_int_original file_delegate, bytes
+    end
+  end
+end
+

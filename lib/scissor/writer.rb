@@ -38,7 +38,7 @@ module Scissor
 
         fragment_outfile =
           fragment_filename.extname.downcase == '.wav' ? fragment_filename :
-          tmpdir + (Digest::MD5.hexdigest(fragment_filename) + '.wav')
+          tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
 
         unless fragment_outfile.exist?
           run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_outfile}\"")
