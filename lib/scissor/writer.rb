@@ -116,12 +116,9 @@ module Scissor
     def run_command(cmd)
       logger.debug("run_command: #{cmd}")
 
-      result = ''
-      status = Open4.popen4(cmd) do |pid, stdin, stdout, stderr|
-        stdin.close
-        logger.debug(stderr.read)
-        result = stdout.read
-      end
+      result, error = '', ''
+      status = Open4.spawn cmd, 'stdout' => result, 'stderr' => error
+      logger.debug(error)
 
       if status.exitstatus != 0
         raise CommandFailed.new(cmd)
