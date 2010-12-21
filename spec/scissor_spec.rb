@@ -273,6 +273,6 @@ describe Scissor do
 
     Scissor.should_receive(:silence).with(1.0)
 
-    silence = scissor.silence
+    scissor.silence
   end
 end
