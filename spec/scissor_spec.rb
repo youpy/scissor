@@ -267,4 +267,12 @@ describe Scissor do
       Scissor().to_file('/tmp/scissor-test/out.mp3')
     }.should raise_error(Scissor::Writer::EmptyFragment)
   end
+
+  it "should silence" do
+    scissor = @mp3.slice(0, 1.0)
+
+    Scissor.should_receive(:silence).with(1.0)
+
+    silence = scissor.silence
+  end
 end

@@ -179,5 +179,9 @@ module Scissor
     def >>(filename)
       to_file(filename, :overwrite => true)
     end
+
+    def silence
+      Scissor.silence(duration)
+    end
   end
 end
