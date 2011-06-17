@@ -72,6 +72,7 @@ module Scissor
 
     def to_file(filename, options)
       filename = Pathname.new(filename)
+      full_filename = filename.expand_path
 
       if @tracks.flatten.empty?
         raise EmptyFragment
@@ -102,9 +103,9 @@ module Scissor
         mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
 
         if filename.extname == '.wav'
-          File.rename(final_tmpfile, filename)
+          File.rename(final_tmpfile, full_filename)
         else
-          run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" \"#{filename}\"")
+          run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" \"#{full_filename}\"")
         end
       end
     end
