@@ -1,4 +1,5 @@
 require 'rubygems'
+gem 'rspec', '< 2'
 require 'rake'
 require 'rake/clean'
 require 'spec/rake/spectask'

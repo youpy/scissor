@@ -17,43 +17,58 @@ module Scissor
 
       which('ecasound')
       which('ffmpeg')
+      which('rubberband')
     end
 
     def add_track(fragments)
       @tracks << fragments
     end
 
-    def fragments_to_file(fragments, outfile, tmpdir)
+    def join_fragments(fragments, outfile, tmpdir)
       position = 0.0
       cmd = %w/ecasound/
 
       fragments.each_with_index do |fragment, index|
         fragment_filename = fragment.filename
-        fragment_duration = fragment.duration
 
         if !index.zero? && (index % 28).zero?
           run_command(cmd.join(' '))
           cmd = %w/ecasound/
         end
 
-        fragment_outfile =
-          fragment_filename.extname.downcase == '.wav' ? fragment_filename :
-          tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
+        if fragment_filename.extname.downcase == '.wav' 
+          fragment_outfile = fragment_filename
+        else
+          fragment_outfile = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
+        end
 
         unless fragment_outfile.exist?
           run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_outfile}\"")
         end
 
-        cmd <<
-          "-a:#{index} " +
-          "-i:" +
-          (fragment.reversed? ? 'reverse,' : '') +
-          "select,#{fragment.start},#{fragment.true_duration},\"#{fragment_outfile}\" " +
-          "-o:#{outfile} " +
-          (fragment.pitch.to_f == 100.0 ? "" : "-ei:#{fragment.pitch} ") +
-          "-y:#{position}"
+        cmd << "-a:#{index} -o:#{outfile} -y:#{position}"
 
-        position += fragment_duration
+        if fragment.stretched? && fragment.pitch.to_f != 100.0
+          rubberband_out = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + "rubberband_#{index}.wav")
+          rubberband_temp = tmpdir + "_rubberband.wav"
+          
+          run_command("ecasound " + 
+            "-i:" +
+            (fragment.reversed? ? 'reverse,' : '') +
+            "select,#{fragment.start},#{fragment.original_duration},\"#{fragment_outfile}\" -o:#{rubberband_temp} "
+          )
+          run_command("rubberband -T #{fragment.pitch.to_f/100} \"#{rubberband_temp}\" \"#{rubberband_out}\"")
+
+          cmd << "-i:\"#{rubberband_out}\""
+        else
+          cmd << 
+            "-i:" +
+            (fragment.reversed? ? 'reverse,' : '') +
+            "select,#{fragment.start},#{fragment.original_duration},\"#{fragment_outfile}\" " +
+            (fragment.pitch.to_f == 100.0 ? "" : "-ei:#{fragment.pitch} ")
+        end
+
+        position += fragment.duration
       end
 
       run_command(cmd.join(' '))
@@ -96,8 +111,9 @@ module Scissor
         tmpfiles = []
 
         @tracks.each_with_index do |fragments, track_index|
-          tmpfiles << tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
-          fragments_to_file(fragments, tmpfile, tmpdir)
+          tmpfile = tmpdir + 'track_%s.wav' % track_index.to_s
+          tmpfiles << tmpfile
+          join_fragments(fragments, tmpfile, tmpdir)
         end
 
         mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
