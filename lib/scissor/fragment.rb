@@ -4,12 +4,13 @@ module Scissor
   class Fragment
     attr_reader :filename, :start, :pitch
 
-    def initialize(filename, start, duration, reverse = false, pitch = 100)
+    def initialize(filename, start, duration, reverse = false, pitch = 100, stretch = false)
       @filename = Pathname.new(filename).realpath
       @start = start
       @duration = duration
       @reverse = reverse
       @pitch = pitch
+      @is_stretched = stretch
 
       freeze
     end
@@ -18,12 +19,16 @@ module Scissor
       @duration * (100 / pitch.to_f)
     end
 
-    def true_duration
+    def original_duration
       @duration
     end
 
     def reversed?
       @reverse
+    end
+
+    def stretched?
+      @is_stretched
     end
 
     def create(remaining_start, remaining_length)

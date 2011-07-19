@@ -147,7 +147,7 @@ module Scissor
         new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start,
-            fragment.true_duration,
+            fragment.original_duration,
             !fragment.reversed?,
             fragment.pitch))
       end
@@ -155,19 +155,24 @@ module Scissor
       new_instance
     end
 
-    def pitch(pitch)
+    def pitch(pitch, stretch = false)
       new_instance = self.class.new
 
       @fragments.each do |fragment|
         new_instance.add_fragment(Fragment.new(
             fragment.filename,
             fragment.start,
-            fragment.true_duration,
+            fragment.original_duration,
             fragment.reversed?,
-            fragment.pitch * (pitch.to_f / 100)))
+            fragment.pitch * (pitch.to_f / 100),
+            stretch))
       end
 
       new_instance
+    end
+
+    def stretch(factor)
+      pitch(factor, true)
     end
 
     def to_file(filename, options = {})
