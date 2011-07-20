@@ -172,7 +172,8 @@ module Scissor
     end
 
     def stretch(factor)
-      pitch(factor, true)
+      factor_for_pitch = ((100 / factor.to_f) * 100).to_i
+      pitch(factor_for_pitch, true)
     end
 
     def to_file(filename, options = {})

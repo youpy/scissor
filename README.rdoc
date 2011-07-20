@@ -68,9 +68,9 @@ supported file format:
 
  foo.pitch(50)
 
-=== time stretch (x2)
+=== 200% time stretch without changing the pitch
 
- foo.pitch(50, true)
+ foo.stretch(200)
 
 === mix
 
