@@ -11,6 +11,7 @@ module Scissor
     class FileExists < Error; end
     class EmptyFragment < Error; end
     class CommandFailed < Error; end
+    class CommandNotFound < Error; end
 
     def initialize
       @tracks = []
@@ -36,7 +37,7 @@ module Scissor
           cmd = %w/ecasound/
         end
 
-        if fragment_filename.extname.downcase == '.wav' 
+        if fragment_filename.extname.downcase == '.wav'
           fragment_outfile = fragment_filename
         else
           fragment_outfile = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
@@ -128,6 +129,8 @@ module Scissor
 
     def which(command)
       run_command("which #{command}")
+    rescue
+      raise CommandNotFound.new(command + ': command not found')
     end
 
     def run_command(cmd)
