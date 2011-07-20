@@ -15,6 +15,7 @@ supported file format:
 
 * {FFmpeg}[http://ffmpeg.mplayerhq.hu/]
 * {Ecasound}[http://www.eca.cx/ecasound/] 2.5.0 or higher
+* {Rubber Band}[http://breakfastquay.com/rubberband/]
 
 === Archive Installation
 
@@ -66,6 +67,10 @@ supported file format:
 === half the pitch
 
  foo.pitch(50)
+
+=== time stretch (x2)
+
+ foo.pitch(50, true)
 
 === mix
 
