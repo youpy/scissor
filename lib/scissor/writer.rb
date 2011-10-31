@@ -37,14 +37,10 @@ module Scissor
           cmd = %w/ecasound/
         end
 
-        if fragment_filename.extname.downcase == '.wav'
-          fragment_outfile = fragment_filename
-        else
-          fragment_outfile = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
-        end
+        fragment_outfile = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
 
         unless fragment_outfile.exist?
-          run_command("ffmpeg -i \"#{fragment_filename}\" \"#{fragment_outfile}\"")
+          run_command("ffmpeg -i \"#{fragment_filename}\" -ar 44100 \"#{fragment_outfile}\"")
         end
 
         cmd << "-a:#{index} -o:#{outfile} -y:#{position}"
@@ -52,8 +48,8 @@ module Scissor
         if fragment.stretched? && fragment.pitch.to_f != 100.0
           rubberband_out = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + "rubberband_#{index}.wav")
           rubberband_temp = tmpdir + "_rubberband.wav"
-          
-          run_command("ecasound " + 
+
+          run_command("ecasound " +
             "-i:" +
             (fragment.reversed? ? 'reverse,' : '') +
             "select,#{fragment.start},#{fragment.original_duration},\"#{fragment_outfile}\" -o:#{rubberband_temp} "
@@ -62,7 +58,7 @@ module Scissor
 
           cmd << "-i:\"#{rubberband_out}\""
         else
-          cmd << 
+          cmd <<
             "-i:" +
             (fragment.reversed? ? 'reverse,' : '') +
             "select,#{fragment.start},#{fragment.original_duration},\"#{fragment_outfile}\" " +
@@ -119,11 +115,7 @@ module Scissor
 
         mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
 
-        if filename.extname == '.wav'
-          File.rename(final_tmpfile, full_filename)
-        else
-          run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" \"#{full_filename}\"")
-        end
+        run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" -ar 44100 \"#{full_filename}\"")
       end
     end
 
