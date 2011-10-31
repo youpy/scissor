@@ -17,7 +17,7 @@ describe Scissor do
 
   it "should get duration" do
     @mp3.should respond_to(:duration)
-    @mp3.duration.should eql(178.183)
+    @mp3.duration.should be_close(178.1, 0.1)
   end
 
   it "should slice" do
@@ -32,7 +32,7 @@ describe Scissor do
   end
 
   it "should cut down if sliced range is out of duration" do
-    @mp3.slice(0, 179).duration.should eql(178.183)
+    @mp3.slice(0, 179).duration.should be_close(178.1, 0.1)
   end
 
   it "should concatenate" do
