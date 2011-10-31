@@ -137,10 +137,17 @@ module Scissor
       logger.debug("run_command: #{cmd}")
 
       result, error = '', ''
-      status = Open4.spawn cmd, 'stdout' => result, 'stderr' => error
-      logger.debug(error)
 
-      if status.exitstatus != 0
+      begin
+        status = Open4.spawn cmd, 'stdout' => result, 'stderr' => error
+      rescue Open4::SpawnError => e
+        raise CommandFailed.new(e.cmd)
+      ensure
+        logger.debug(result)
+        logger.debug(error)
+      end
+
+      if status && status.exitstatus != 0
         raise CommandFailed.new(cmd)
       end
 
