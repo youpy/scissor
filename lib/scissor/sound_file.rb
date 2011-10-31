@@ -21,7 +21,7 @@ module Scissor
     def length
       case @ext
       when 'mp3'
-        Mp3Info.new(@filename).length
+        Mp3Info.new(@filename.to_s).length
       when 'wav'
         riff = Riff::Reader.open(@filename ,"r")
         data = riff.root_chunk['data']
