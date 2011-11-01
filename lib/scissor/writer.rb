@@ -2,6 +2,7 @@ require 'digest/md5'
 require 'pathname'
 require 'open4'
 require 'temp_dir'
+require 'streamio-ffmpeg'
 
 module Scissor
   class Writer
@@ -17,7 +18,6 @@ module Scissor
       @tracks = []
 
       which('ecasound')
-      which('ffmpeg')
       which('rubberband')
     end
 
@@ -40,7 +40,8 @@ module Scissor
         fragment_outfile = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + '.wav')
 
         unless fragment_outfile.exist?
-          run_command("ffmpeg -i \"#{fragment_filename}\" -ar 44100 \"#{fragment_outfile}\"")
+          movie = FFMPEG::Movie.new(fragment_filename.to_s)
+          movie.transcode(fragment_outfile.to_s, :audio_sample_rate => 44100)
         end
 
         cmd << "-a:#{index} -o:#{outfile} -y:#{position}"
@@ -115,7 +116,8 @@ module Scissor
 
         mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
 
-        run_command("ffmpeg -ab #{options[:bitrate]} -i \"#{final_tmpfile}\" -ar 44100 \"#{full_filename}\"")
+        movie = FFMPEG::Movie.new(final_tmpfile.to_s)
+        movie.transcode(full_filename.to_s, :audio_sample_rate => 44100, :audio_bitrate => options[:bitrate])
       end
     end
 

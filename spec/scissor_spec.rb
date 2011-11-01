@@ -7,6 +7,8 @@ include FileUtils
 
 describe Scissor do
   before do
+    FFMPEG.logger.level = Logger::WARN
+
     @mp3 = Scissor(fixture('sample.mp3'))
     mkdir '/tmp/scissor-test'
   end
