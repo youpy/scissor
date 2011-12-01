@@ -63,6 +63,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('riff', '<= 0.3.0')
   s.add_dependency('tempdir')
   s.add_dependency('streamio-ffmpeg')
+  s.add_development_dependency('fakeweb')
   #s.required_ruby_version = '>= 1.8.2'
 
   s.files = %w(README.rdoc ChangeLog Rakefile) +

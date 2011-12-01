@@ -5,8 +5,12 @@ require 'scissor/sound_file'
 require 'scissor/sequence'
 require 'scissor/writer'
 
-def Scissor(*args)
-  Scissor::Chunk.new(*args)
+def Scissor(filename_or_url = nil)
+  if filename_or_url && filename_or_url =~ /^http/
+    Scissor::Chunk.new_from_url(filename_or_url)
+  else
+    Scissor::Chunk.new(filename_or_url)
+  end
 end
 
 require 'logger'

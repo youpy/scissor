@@ -2,6 +2,7 @@ $:.unshift File.dirname(__FILE__)
 
 require 'spec_helper'
 require 'fileutils'
+require 'fakeweb'
 
 include FileUtils
 
@@ -11,10 +12,22 @@ describe Scissor do
 
     @mp3 = Scissor(fixture('sample.mp3'))
     mkdir '/tmp/scissor-test'
+
+    FakeWeb.clean_registry
   end
 
   after do
     rm_rf '/tmp/scissor-test'
+  end
+
+  it "should create from url" do
+    url = 'http://example.com/sample_mp3'
+    FakeWeb.register_uri(:get, url, :body => fixture('sample.mp3'), :content_type => 'audio/mpeg')
+
+    mp3 = Scissor(url)
+
+    mp3.should be_an_instance_of(Scissor::Chunk)
+    mp3.duration.should be_close(178.1, 0.1)
   end
 
   it "should get duration" do

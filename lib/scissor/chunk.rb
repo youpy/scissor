@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'tempfile'
+
 module Scissor
   class Chunk
     class Error < StandardError; end
@@ -15,6 +18,35 @@ module Scissor
           0,
           SoundFile.new(filename).length)
       end
+    end
+
+    def self.new_from_url(url)
+      file = nil
+      content_types = {
+        'audio/wav' => 'wav',
+        'audio/x-wav' => 'wav',
+        'audio/wave' => 'wav',
+        'audio/x-pn-wav' => 'wav',
+        'audio/mpeg' => 'mp3',
+        'audio/x-mpeg' => 'mp3',
+        'audio/mp3' => 'mp3',
+        'audio/x-mp3' => 'mp3',
+        'audio/mpeg3' => 'mp3',
+        'audio/x-mpeg3' => 'mp3',
+        'audio/mpg' => 'mp3',
+        'audio/x-mpg' => 'mp3',
+        'audio/x-mpegaudio' => 'mp3',
+      }
+
+      open(url) do |f|
+        ext = content_types[f.content_type.downcase]
+
+        file = Tempfile.new(['audio', '.' + ext])
+        file.write(f.read)
+        file.flush
+      end
+
+      new(file.path)
     end
 
     def add_fragment(fragment)
