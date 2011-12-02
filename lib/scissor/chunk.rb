@@ -109,9 +109,8 @@ module Scissor
     def loop(count)
       orig_fragments = @fragments.clone
       new_instance = Scissor()
-      new_instance.add_fragments(orig_fragments)
 
-      (count - 1).times do
+      count.times do
         new_instance.add_fragments(orig_fragments)
       end
 
@@ -134,26 +133,14 @@ module Scissor
     alias / split
 
     def fill(filled_duration)
-      if @fragments.empty?
+      if duration.zero?
         raise EmptyFragment
       end
 
-      remain = filled_duration
-      new_instance = self.class.new
+      loop_count = (filled_duration / duration).to_i
+      remain = filled_duration % duration
 
-      while !remain.zero? && filled_duration > new_instance.duration
-        if remain < duration
-          added = slice(0, remain)
-        else
-          added = self
-        end
-
-        new_instance += added
-        remain -= added.duration
-      end
-
-
-      new_instance
+      loop(loop_count) + slice(0, remain)
     end
 
     def replace(start, length, replaced)
