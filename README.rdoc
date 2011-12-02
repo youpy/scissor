@@ -36,9 +36,16 @@ supported file format:
 
 === instantiate
 
+==== from file
+
  foo = Scissor('foo.mp3')
  bar = Scissor('bar.wav')
-  
+
+==== from URL
+
+ foo = Scissor('http://example.com/foo.mp3')
+ bar = Scissor('http://example.org/bar.wav')
+
 === concat
 
  foo + bar > 'foobar.mp3'
