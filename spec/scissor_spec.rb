@@ -26,7 +26,7 @@ describe Scissor do
 
     mp3 = Scissor(url)
 
-    mp3.should be_an_instance_of(Scissor::Chunk)
+    mp3.should be_an_instance_of(Scissor::Tape)
     mp3.duration.should be_close(178.1, 0.1)
   end
 
@@ -203,7 +203,7 @@ describe Scissor do
     b = @mp3.slice(150, 20)
 
     scissor = Scissor.mix([a, b], '/tmp/scissor-test/out.mp3')
-    scissor.should be_an_instance_of(Scissor::Chunk)
+    scissor.should be_an_instance_of(Scissor::Tape)
     scissor.duration.should be_close(120, 0.1)
     scissor.fragments.size.should eql(1)
   end
@@ -211,13 +211,13 @@ describe Scissor do
   it "should raise error if replaced range is out of duration" do
     lambda {
       @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))
-    }.should raise_error(Scissor::Chunk::OutOfDuration)
+    }.should raise_error(Scissor::Tape::OutOfDuration)
   end
 
   it "should write to file and return new instance of Scissor" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.should be_an_instance_of(Scissor::Chunk)
+    result.should be_an_instance_of(Scissor::Tape)
     result.duration.should be_close(140, 0.1)
   end
 
@@ -241,7 +241,7 @@ describe Scissor do
   it "should write to file with many fragments" do
     scissor = (@mp3.slice(0, 120) / 100).inject(Scissor()){|m, s| m + s } + @mp3.slice(10, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.should be_an_instance_of(Scissor::Chunk)
+    result.should be_an_instance_of(Scissor::Tape)
     result.duration.should be_close(140, 0.1)
   end
 

@@ -1,5 +1,5 @@
 require 'scissor/loggable'
-require 'scissor/chunk'
+require 'scissor/tape'
 require 'scissor/fragment'
 require 'scissor/sound_file'
 require 'scissor/sequence'
@@ -7,9 +7,9 @@ require 'scissor/writer'
 
 def Scissor(filename_or_url = nil)
   if filename_or_url && filename_or_url =~ /^http/
-    Scissor::Chunk.new_from_url(filename_or_url)
+    Scissor::Tape.new_from_url(filename_or_url)
   else
-    Scissor::Chunk.new(filename_or_url)
+    Scissor::Tape.new(filename_or_url)
   end
 end
 

@@ -13,11 +13,11 @@ describe Scissor::Sequence do
     seq.should be_an_instance_of(Scissor::Sequence)
   end
 
-  it "should apply chunk as instrument" do
+  it "should apply tape as instrument" do
     seq = Scissor.sequence('ababaab ab', 0.5)
     scissor = seq.apply(:a => @foo, :b => @bar)
 
-    scissor.should be_an_instance_of(Scissor::Chunk)
+    scissor.should be_an_instance_of(Scissor::Tape)
     scissor.duration.should eql(5.0)
     scissor.fragments.size.should eql(10)
 
@@ -40,7 +40,7 @@ describe Scissor::Sequence do
     seq = Scissor.sequence('ababaab ab', 0.5)
     scissor = seq.apply(:a => Proc.new { @foo }, :b => Proc.new { @bar })
 
-    scissor.should be_an_instance_of(Scissor::Chunk)
+    scissor.should be_an_instance_of(Scissor::Tape)
     scissor.duration.should eql(5.0)
     scissor.fragments.size.should eql(10)
 

@@ -2,7 +2,7 @@ require 'open-uri'
 require 'tempfile'
 
 module Scissor
-  class Chunk
+  class Tape
     class Error < StandardError; end
     class EmptyFragment < Error; end
     class OutOfDuration < Error; end
