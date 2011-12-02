@@ -88,8 +88,9 @@ describe Scissor do
   end
 
   it "should loop" do
-    scissor = @mp3.slice(0, 10).loop(3)
-    scissor.duration.should eql(30.0)
+    scissor = @mp3.slice(0, 10)
+    scissor.loop(3).duration.should eql(30.0)
+    scissor.duration.should eql(10.0)
   end
 
   it "should loop using arithmetic operator" do

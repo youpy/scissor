@@ -108,12 +108,14 @@ module Scissor
 
     def loop(count)
       orig_fragments = @fragments.clone
+      new_instance = Scissor()
+      new_instance.add_fragments(orig_fragments)
 
       (count - 1).times do
-        add_fragments(orig_fragments)
+        new_instance.add_fragments(orig_fragments)
       end
 
-      self
+      new_instance
     end
 
     alias * loop
