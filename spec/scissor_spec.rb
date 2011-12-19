@@ -182,11 +182,11 @@ describe Scissor do
   end
 
   it "should stretch" do
-    scissor = @mp3.slice(0, 10) + @mp3.slice(0, 5)
+    scissor = @mp3.slice(0, 0.1)
 
-    scissor.duration.should eql(15.0)
-    scissor.pitch(50, true).duration.should eql(30.0)
-    scissor.stretch(200).duration.should eql(30.0)
+    scissor.duration.should eql(0.1)
+    scissor.pitch((0.1 / 120) * 100, true).duration.should be_close(120.0, 0.1)
+    scissor.stretch((120 / 0.1) * 100).duration.should be_close(120.0, 0.1)
   end
 
   it "should join instances of scissor" do

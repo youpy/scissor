@@ -193,7 +193,7 @@ module Scissor
     end
 
     def stretch(factor)
-      factor_for_pitch = ((100 / factor.to_f) * 100).to_i
+      factor_for_pitch = 1 / (factor.to_f / 100) * 100
       pitch(factor_for_pitch, true)
     end
 
