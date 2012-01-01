@@ -58,7 +58,7 @@ spec = Gem::Specification.new do |s|
   s.homepage          = HOMEPATH
   s.test_files        = Dir["test/test_*.rb"]
 
-  s.add_dependency('open4', '<= 1.0.1')
+  s.add_dependency('open4', '>= 1.3.0')
   s.add_dependency('ruby-mp3info')
   s.add_dependency('riff', '<= 0.3.0')
   s.add_dependency('tempdir')
