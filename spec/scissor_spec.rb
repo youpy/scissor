@@ -79,12 +79,12 @@ describe Scissor do
   it "should slice concatenated one" do
     scissor = @mp3.slice(0.33, 1).concat(@mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
 
-    scissor.duration.to_s.should == '0.2'
+    scissor.duration.should be_close(0.2, 0.001)
     scissor.fragments.size.should eql(2)
-    scissor.fragments[0].start.to_s.should == '1.23'
-    scissor.fragments[0].duration.to_s.should == '0.1'
-    scissor.fragments[1].start.to_s.should == '0.2'
-    scissor.fragments[1].duration.to_s.should == '0.1'
+    scissor.fragments[0].start.should be_close(1.23, 0.001)
+    scissor.fragments[0].duration.should be_close(0.1, 0.001)
+    scissor.fragments[1].start.should be_close(0.2, 0.001)
+    scissor.fragments[1].duration.should be_close(0.1, 0.001)
   end
 
   it "should loop" do
@@ -102,7 +102,7 @@ describe Scissor do
     splits = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)).split(5)
     splits.length.should eql(5)
     splits.each do |split|
-      split.duration.to_s.should == '0.22'
+      split.duration.should be_close(0.22, 0.001)
     end
 
     splits[0].fragments.size.should eql(1)
@@ -116,7 +116,7 @@ describe Scissor do
     splits = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)) / 5
     splits.length.should eql(5)
     splits.each do |split|
-      split.duration.to_s.should == '0.22'
+      split.duration.should be_close(0.22, 0.001)
     end
 
     splits[0].fragments.size.should eql(1)

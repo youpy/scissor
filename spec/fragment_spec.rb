@@ -27,7 +27,7 @@ describe Scissor::Fragment do
   it "should freezed" do
     lambda {
       @fragment.instance_eval { @duration = 1 }
-    }.should raise_error(StandardError, "can't modify frozen object")
+    }.should raise_error
   end
 
   it "should have a pitch" do

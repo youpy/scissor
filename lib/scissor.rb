@@ -6,7 +6,7 @@ require 'scissor/sequence'
 require 'scissor/writer'
 
 def Scissor(filename_or_url = nil)
-  if filename_or_url && filename_or_url =~ /^http/
+  if filename_or_url && filename_or_url.to_s =~ /^http/
     Scissor::Tape.new_from_url(filename_or_url)
   else
     Scissor::Tape.new(filename_or_url)
