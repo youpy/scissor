@@ -30,6 +30,14 @@ describe Scissor do
     mp3.duration.should be_close(178.1, 0.1)
   end
 
+  it "should expand given path" do
+    cp fixture('sample.mp3'), '/tmp/scissor-test'
+
+    mp3 = Scissor('~/../../../../../../../../../../tmp/scissor-test/sample.mp3')
+    mp3.should be_an_instance_of(Scissor::Tape)
+    mp3.duration.should be_close(178.1, 0.1)
+  end
+
   it "should get duration" do
     @mp3.should respond_to(:duration)
     @mp3.duration.should be_close(178.1, 0.1)
@@ -236,6 +244,13 @@ describe Scissor do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.duration.should be_close(140, 0.1)
+  end
+
+  it "should write to expanded path" do
+    @mp3.to_file('~/../../../../../../../../../../tmp/scissor-test/sample.mp3')
+
+    mp3 = Scissor('/tmp/scissor-test/sample.mp3')
+    mp3.should be_an_instance_of(Scissor::Tape)
   end
 
   it "should write to wav file" do

@@ -13,6 +13,7 @@ module Scissor
       @fragments = []
 
       if filename
+        filename = Pathname(filename).expand_path
         @fragments << Fragment.new(
           filename,
           0,
@@ -205,7 +206,7 @@ module Scissor
     alias > to_file
 
     def >>(filename)
-      to_file(Pathname(filename).expand_path, :overwrite => true)
+      to_file(filename, :overwrite => true)
     end
 
     def silence
