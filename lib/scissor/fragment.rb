@@ -43,7 +43,8 @@ module Scissor
             start + remaining_start * pitch.to_f / 100,
             (duration - remaining_start) * pitch.to_f / 100,
             false,
-            pitch)
+            pitch,
+            stretched?)
 
           remaining_length -= duration - remaining_start
           remaining_start = 0
@@ -53,7 +54,8 @@ module Scissor
             start + remaining_start * pitch.to_f / 100,
             remaining_length * pitch.to_f / 100,
             false,
-            pitch)
+            pitch,
+            stretched?)
 
           remaining_start = 0
           remaining_length = 0

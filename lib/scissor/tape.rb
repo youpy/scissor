@@ -170,7 +170,8 @@ module Scissor
             fragment.start,
             fragment.original_duration,
             !fragment.reversed?,
-            fragment.pitch))
+            fragment.pitch,
+            fragment.stretched?))
       end
 
       new_instance

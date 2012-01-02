@@ -187,6 +187,17 @@ describe Scissor do
     scissor.duration.should eql(0.1)
     scissor.pitch((0.1 / 120) * 100, true).duration.should be_close(120.0, 0.1)
     scissor.stretch((120 / 0.1) * 100).duration.should be_close(120.0, 0.1)
+
+    stretched = scissor.stretch((120 / 0.1) * 100).slice(0, 10)
+    stretched.fragments.first.should be_stretched
+
+    stretched1 = scissor.stretch((120 / 0.1) * 100)
+    stretched2 = scissor.stretch((120 / 0.1) * 100)
+    stretched = (stretched1 + stretched2).slice(100, 50)
+    stretched.fragments.first.should be_stretched
+
+    scissor = (@mp3.slice(0, 10) + @mp3.slice(0, 5)).stretch(200).reverse
+    scissor.fragments.first.should be_stretched
   end
 
   it "should join instances of scissor" do
