@@ -9,7 +9,7 @@ def Scissor(filename_or_url = nil)
   if filename_or_url && filename_or_url.to_s =~ /^http/
     Scissor::Tape.new_from_url(filename_or_url)
   else
-    Scissor::Tape.new(filename_or_url)
+    Scissor::Tape.new(filename_or_url && Pathname(filename_or_url).expand_path)
   end
 end
 

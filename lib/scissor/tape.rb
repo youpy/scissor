@@ -205,7 +205,7 @@ module Scissor
     alias > to_file
 
     def >>(filename)
-      to_file(filename, :overwrite => true)
+      to_file(Pathname(filename).expand_path, :overwrite => true)
     end
 
     def silence
