@@ -17,7 +17,9 @@ require 'logger'
 
 module Scissor
   @logger = Logger.new(STDOUT)
-  @logger.level = Logger::INFO
+  @logger.level = Logger::WARN
+
+  FFMPEG.logger = @logger
 
   class << self
     attr_accessor :logger

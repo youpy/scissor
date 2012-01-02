@@ -8,8 +8,6 @@ include FileUtils
 
 describe Scissor do
   before do
-    FFMPEG.logger.level = Logger::WARN
-
     @mp3 = Scissor(fixture('sample.mp3'))
     mkdir '/tmp/scissor-test'
 
@@ -18,6 +16,12 @@ describe Scissor do
 
   after do
     rm_rf '/tmp/scissor-test'
+  end
+
+  it "should set default logger level to Logger::WARN" do
+    [Scissor, FFMPEG].each do |mod|
+      mod.logger.level.should eql(Logger::WARN)
+    end
   end
 
   it "should create from url" do
