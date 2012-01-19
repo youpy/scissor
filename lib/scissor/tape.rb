@@ -47,7 +47,11 @@ module Scissor
         file.flush
       end
 
-      new(file.path)
+      tape = new(file.path)
+
+      # reference tempfile to prevent GC
+      tape.instance_variable_set('@__tempfile', file)
+      tape
     end
 
     def add_fragment(fragment)
