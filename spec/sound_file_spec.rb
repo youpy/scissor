@@ -21,7 +21,7 @@ describe Scissor::SoundFile do
   end
 
   it "should get length" do
-    @mp3.length.should be_close(178.1, 0.1)
+    @mp3.length.should be_within(0.1).of(178.1)
     @wav.length.should eql(1.0)
   end
 end

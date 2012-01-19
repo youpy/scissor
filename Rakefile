@@ -1,110 +1,48 @@
+# encoding: utf-8
+
 require 'rubygems'
-gem 'rspec', '< 2'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
 require 'rake'
-require 'rake/clean'
-require 'spec/rake/spectask'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
-require 'rake/contrib/rubyforgepublisher'
-require 'rake/contrib/sshpublisher'
-require 'fileutils'
-include FileUtils
 
-NAME              = "scissor"
-AUTHOR            = "youpy"
-EMAIL             = "youpy@buycheapviagraonlinenow.com"
-DESCRIPTION       = "utility to chop sound files"
-RUBYFORGE_PROJECT = "scissor"
-HOMEPATH          = "http://github.com/youpy/scissor"
-BIN_FILES         = %w(  )
-VERS              = "0.2.8"
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+  gem.name = "scissor"
+  gem.summary = %Q{utility to chop sound files}
+  gem.description = %Q{utility to chop sound files}
+  gem.email = "youpy@buycheapviagraonlinenow.com"
+  gem.authors = ["youpy"]
+  gem.homepage = "http://github.com/youpy/scissor"
+  # dependencies defined in Gemfile
+end
+Jeweler::RubygemsDotOrgTasks.new
 
-REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
-CLEAN.include ['**/.*.sw?', '*.gem', '.config']
-RDOC_OPTS = [
-  '--title', "#{NAME} documentation",
-  "--charset", "utf-8",
-  "--opname", "index.html",
-  "--line-numbers",
-  "--main", "README.rdoc",
-  "--inline-source",
-]
-
-task :default => [:spec]
-task :package => [:clean]
-
-Spec::Rake::SpecTask.new do |t|
-  t.spec_opts = ['--options', "spec/spec.opts"]
-  t.spec_files = FileList['spec/*_spec.rb']
-  t.rcov = true
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-spec = Gem::Specification.new do |s|
-  s.name              = NAME
-  s.version           = VERS
-  s.platform          = Gem::Platform::RUBY
-  s.has_rdoc          = true
-  s.extra_rdoc_files  = ["README.rdoc", "ChangeLog"]
-  s.rdoc_options     += RDOC_OPTS + ['--exclude', '^(examples|extras)/']
-  s.summary           = DESCRIPTION
-  s.description       = DESCRIPTION
-  s.author            = AUTHOR
-  s.email             = EMAIL
-  s.executables       = BIN_FILES
-  s.rubyforge_project = RUBYFORGE_PROJECT
-  s.bindir            = "bin"
-  s.require_path      = "lib"
-  s.homepage          = HOMEPATH
-  s.test_files        = Dir["test/test_*.rb"]
-
-  s.add_dependency('open4', '>= 1.3.0')
-  s.add_dependency('ruby-mp3info')
-  s.add_dependency('riff', '<= 0.3.0')
-  s.add_dependency('tempdir')
-  s.add_dependency('streamio-ffmpeg')
-  s.add_development_dependency('fakeweb')
-  #s.required_ruby_version = '>= 1.8.2'
-
-  s.files = %w(README.rdoc ChangeLog Rakefile) +
-    Dir.glob("{bin,doc,test,lib,data,templates,generator,extras,website,script}/**/*") + 
-    Dir.glob("ext/**/*.{h,c,rb}") +
-    Dir.glob("examples/**/*.rb") +
-    Dir.glob("tools/*.rb")
-
-  s.extensions = FileList["ext/**/extconf.rb"].to_a
+RSpec::Core::RakeTask.new(:rcov) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
 end
 
-Rake::GemPackageTask.new(spec) do |p|
-  p.need_tar = true
-  p.gem_spec = spec
-end
+task :default => :spec
 
-task :install do
-  name = "#{NAME}-#{VERS}.gem"
-  sh %{rake package}
-  sh %{sudo gem install pkg/#{name}}
-end
-
-task :uninstall => [:clean] do
-  sh %{sudo gem uninstall #{NAME}}
-end
-
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'html'
-  rdoc.options += RDOC_OPTS
-  rdoc.template = "resh"
-  #rdoc.template = "#{ENV['template']}.rb" if ENV['template']
-  if ENV['DOC_FILES']
-    rdoc.rdoc_files.include(ENV['DOC_FILES'].split(/,\s*/))
-  else
-    rdoc.rdoc_files.include('README.rdoc', 'ChangeLog')
-    rdoc.rdoc_files.include('lib/**/*.rb')
-    rdoc.rdoc_files.include('ext/**/*.c')
-  end
-end
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
-desc 'Show information about the gem.'
-task :debug_gem do
-  puts spec.to_ruby
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "scissor #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end

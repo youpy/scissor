@@ -1,3 +1,5 @@
 pkg
 coverage
 *.gem
+vendor/bundle
+.bundle

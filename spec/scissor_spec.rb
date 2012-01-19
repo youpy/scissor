@@ -27,7 +27,7 @@ describe Scissor do
     mp3 = Scissor(url)
 
     mp3.should be_an_instance_of(Scissor::Tape)
-    mp3.duration.should be_close(178.1, 0.1)
+    mp3.duration.should be_within(0.1).of(178.1)
   end
 
   it "should expand given path" do
@@ -35,12 +35,12 @@ describe Scissor do
 
     mp3 = Scissor('~/../../../../../../../../../../tmp/scissor-test/sample.mp3')
     mp3.should be_an_instance_of(Scissor::Tape)
-    mp3.duration.should be_close(178.1, 0.1)
+    mp3.duration.should be_within(0.1).of(178.1)
   end
 
   it "should get duration" do
     @mp3.should respond_to(:duration)
-    @mp3.duration.should be_close(178.1, 0.1)
+    @mp3.duration.should be_within(0.1).of(178.1)
   end
 
   it "should slice" do
@@ -55,7 +55,7 @@ describe Scissor do
   end
 
   it "should cut down if sliced range is out of duration" do
-    @mp3.slice(0, 179).duration.should be_close(178.1, 0.1)
+    @mp3.slice(0, 179).duration.should be_within(0.1).of(178.1)
   end
 
   it "should concatenate" do
@@ -74,7 +74,7 @@ describe Scissor do
 
   it "should concat silence" do
     scissor = @mp3.slice(0, 12).concat(Scissor.silence(0.32009))
-    scissor.duration.should be_close(12.32, 0.01)
+    scissor.duration.should be_within(0.01).of(12.32)
   end
 
   it "should concatenate and create new instance" do
@@ -87,12 +87,12 @@ describe Scissor do
   it "should slice concatenated one" do
     scissor = @mp3.slice(0.33, 1).concat(@mp3.slice(0.2, 0.1)).slice(0.9, 0.2)
 
-    scissor.duration.should be_close(0.2, 0.001)
+    scissor.duration.should be_within(0.001).of(0.2)
     scissor.fragments.size.should eql(2)
-    scissor.fragments[0].start.should be_close(1.23, 0.001)
-    scissor.fragments[0].duration.should be_close(0.1, 0.001)
-    scissor.fragments[1].start.should be_close(0.2, 0.001)
-    scissor.fragments[1].duration.should be_close(0.1, 0.001)
+    scissor.fragments[0].start.should be_within(0.001).of(1.23)
+    scissor.fragments[0].duration.should be_within(0.001).of(0.1)
+    scissor.fragments[1].start.should be_within(0.001).of(0.2)
+    scissor.fragments[1].duration.should be_within(0.001).of(0.1)
   end
 
   it "should loop" do
@@ -110,7 +110,7 @@ describe Scissor do
     splits = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)).split(5)
     splits.length.should eql(5)
     splits.each do |split|
-      split.duration.should be_close(0.22, 0.001)
+      split.duration.should be_within(0.001).of(0.22)
     end
 
     splits[0].fragments.size.should eql(1)
@@ -124,7 +124,7 @@ describe Scissor do
     splits = (@mp3.slice(0.33, 1) + @mp3.slice(0.2, 0.1)) / 5
     splits.length.should eql(5)
     splits.each do |split|
-      split.duration.should be_close(0.22, 0.001)
+      split.duration.should be_within(0.001).of(0.22)
     end
 
     splits[0].fragments.size.should eql(1)
@@ -193,8 +193,8 @@ describe Scissor do
     scissor = @mp3.slice(0, 0.1)
 
     scissor.duration.should eql(0.1)
-    scissor.pitch((0.1 / 120) * 100, true).duration.should be_close(120.0, 0.1)
-    scissor.stretch((120 / 0.1) * 100).duration.should be_close(120.0, 0.1)
+    scissor.pitch((0.1 / 120) * 100, true).duration.should be_within(0.01).of(120.0)
+    scissor.stretch((120 / 0.1) * 100).duration.should be_within(0.1).of(120.0)
 
     stretched = scissor.stretch((120 / 0.1) * 100).slice(0, 10)
     stretched.fragments.first.should be_stretched
@@ -223,7 +223,7 @@ describe Scissor do
 
     scissor = Scissor.mix([a, b], '/tmp/scissor-test/out.mp3')
     scissor.should be_an_instance_of(Scissor::Tape)
-    scissor.duration.should be_close(120, 0.1)
+    scissor.duration.should be_within(0.1).of(120)
     scissor.fragments.size.should eql(1)
   end
 
@@ -237,13 +237,13 @@ describe Scissor do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor::Tape)
-    result.duration.should be_close(140, 0.1)
+    result.duration.should be_within(0.1).of(140)
   end
 
   it "should write to mp3 file" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
-    result.duration.should be_close(140, 0.1)
+    result.duration.should be_within(0.1).of(140)
   end
 
   it "should write to expanded path" do
@@ -256,51 +256,51 @@ describe Scissor do
   it "should write to wav file" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
     result = scissor.to_file('/tmp/scissor-test/out.wav')
-    result.duration.should be_close(140, 0.1)
+    result.duration.should be_within(0.1).of(140)
   end
 
   it "should write to file using 'greater than' operator" do
     result = @mp3.slice(0, 120) + @mp3.slice(150, 20) > '/tmp/scissor-test/out.wav'
-    result.duration.should be_close(140, 0.1)
+    result.duration.should be_within(0.1).of(140)
   end
 
   it "should write to file with many fragments" do
     scissor = (@mp3.slice(0, 120) / 100).inject(Scissor()){|m, s| m + s } + @mp3.slice(10, 20)
     result = scissor.to_file('/tmp/scissor-test/out.mp3')
     result.should be_an_instance_of(Scissor::Tape)
-    result.duration.should be_close(140, 0.1)
+    result.duration.should be_within(0.1).of(140)
   end
 
   it "should overwrite existing file" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.should be_close(10, 0.1)
+    result.duration.should be_within(0.1).of(10)
 
     result = @mp3.slice(0, 12).to_file('/tmp/scissor-test/out.mp3',
       :overwrite => true)
-    result.duration.should be_close(12, 0.1)
+    result.duration.should be_within(0.1).of(12)
   end
 
   it "should overwrite existing file using double 'greater than' oprator" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.should be_close(10, 0.1)
+    result.duration.should be_within(0.1).of(10)
 
     result = @mp3.slice(0, 12) >> '/tmp/scissor-test/out.mp3'
-    result.duration.should be_close(12, 0.1)
+    result.duration.should be_within(0.1).of(12)
   end
 
   it "should write to file in the variable pitch" do
     scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
 
     result = scissor.pitch(50).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.should be_close(280, 0.1)
+    result.duration.should be_within(0.1).of(280)
 
     result = scissor.pitch(200).to_file('/tmp/scissor-test/out.mp3', :overwrite => true)
-    result.duration.should be_close(70, 0.1)
+    result.duration.should be_within(0.1).of(70)
   end
 
   it "should raise error if overwrite option is false" do
     result = @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3')
-    result.duration.should be_close(10, 0.1)
+    result.duration.should be_within(0.1).of(10)
 
     lambda {
       @mp3.slice(0, 10).to_file('/tmp/scissor-test/out.mp3',
