@@ -34,14 +34,12 @@ supported file format:
 
 == Synopsis
 
-=== instantiate
-
-==== from file
+=== instantiate from file
 
  foo = Scissor('foo.mp3')
  bar = Scissor('bar.wav')
 
-==== from URL
+=== instantiate from URL
 
  foo = Scissor('http://example.com/foo.mp3')
  bar = Scissor('http://example.org/bar.wav')
