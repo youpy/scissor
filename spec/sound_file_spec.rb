@@ -24,4 +24,13 @@ describe Scissor::SoundFile do
     @mp3.length.should be_within(0.1).of(178.1)
     @wav.length.should eql(1.0)
   end
+
+  describe '#mono?' do
+    it "should return true if sound file is mono" do
+      @mp3.should be_mono
+      @wav.should_not be_mono
+
+      Scissor::SoundFile.new(fixture('mono.wav')).should be_mono
+    end
+  end
 end

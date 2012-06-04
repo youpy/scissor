@@ -28,9 +28,12 @@ module Scissor
     def join_fragments(fragments, outfile, tmpdir)
       position = 0.0
       cmd = %w/ecasound/
+      is_mono = {}
 
       fragments.each_with_index do |fragment, index|
         fragment_filename = fragment.filename
+
+        is_mono[fragment_filename] ||= mono?(fragment_filename)
 
         if !index.zero? && (index % 28).zero?
           run_command(cmd.join(' '))
@@ -44,7 +47,7 @@ module Scissor
           movie.transcode(fragment_outfile.to_s, :audio_sample_rate => 44100)
         end
 
-        cmd << "-a:#{index} -o:#{outfile} -y:#{position}"
+        cmd << "-a:#{index} -o:#{outfile} -y:#{position}#{is_mono[fragment_filename] ? ' -chcopy:1,2' : ''}"
 
         if fragment.stretched? && fragment.pitch.to_f != 100.0
           rubberband_out = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + "rubberband_#{index}.wav")
@@ -146,6 +149,12 @@ module Scissor
       end
 
       return result
+    end
+
+    private
+
+    def mono?(filename)
+      SoundFile.new(filename).mono?
     end
   end
 end

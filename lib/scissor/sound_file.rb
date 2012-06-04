@@ -30,5 +30,18 @@ module Scissor
         data.length / fmt.body.unpack('s2i2')[3].to_f
       end
     end
+
+    def mono?
+      case @ext
+      when 'mp3'
+        Mp3Info.new(@filename.to_s).channel_mode == 'Single Channel'
+      when 'wav'
+        riff = Riff::Reader.open(@filename ,"r")
+        data = riff.root_chunk['data']
+        fmt = riff.root_chunk['fmt ']
+
+        fmt.body.unpack('s2')[1] == 1
+      end
+    end
   end
 end
