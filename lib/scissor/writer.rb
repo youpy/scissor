@@ -154,7 +154,7 @@ module Scissor
     private
 
     def mono?(filename)
-      SoundFile.new(filename).mono?
+      SoundFile.new_from_filename(filename).mono?
     end
   end
 end

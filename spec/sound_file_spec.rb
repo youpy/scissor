@@ -7,8 +7,8 @@ include FileUtils
 
 describe Scissor::SoundFile do
   before do
-    @mp3 = Scissor::SoundFile.new(fixture('sample.mp3'))
-    @wav = Scissor::SoundFile.new(fixture('sine.wav'))
+    @mp3 = Scissor::SoundFile.new_from_filename(fixture('sample.mp3'))
+    @wav = Scissor::SoundFile.new_from_filename(fixture('sine.wav'))
   end
 
   after do
@@ -16,7 +16,7 @@ describe Scissor::SoundFile do
 
   it "raise error if unknown file format" do
     lambda {
-      Scissor::SoundFile.new(fixture('foo.bar'))
+      Scissor::SoundFile.new_from_filename(fixture('foo.bar'))
     }.should raise_error(Scissor::SoundFile::UnknownFormat)
   end
 
@@ -30,7 +30,7 @@ describe Scissor::SoundFile do
       @mp3.should be_mono
       @wav.should_not be_mono
 
-      Scissor::SoundFile.new(fixture('mono.wav')).should be_mono
+      Scissor::SoundFile.new_from_filename(fixture('mono.wav')).should be_mono
     end
   end
 end

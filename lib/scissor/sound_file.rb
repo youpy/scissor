@@ -4,44 +4,66 @@ require 'riff/reader'
 
 module Scissor
   class SoundFile
-    SUPPORTED_FORMATS = %w/mp3 wav/
+    class Mp3 < SoundFile
+      def length
+        info.length
+      end
+
+      def mono?
+        info.channel_mode == 'Single Channel'
+      end
+
+      private
+
+      def info
+        @info ||= Mp3Info.new(@filename.to_s)
+      end
+    end
+
+    class Wav < SoundFile
+      def length
+        data.length / fmt.body.unpack('s2i2')[3].to_f
+      end
+
+      def mono?
+        fmt.body.unpack('s2')[1] == 1
+      end
+
+      private
+
+      def riff
+        @riff ||= Riff::Reader.open(@filename ,"r")
+      end
+
+      def data
+        @data ||= riff.root_chunk['data']
+      end
+
+      def fmt
+        @fmt ||= riff.root_chunk['fmt ']
+      end
+    end
+
+    SUPPORTED_FORMATS = {
+      :mp3 => Mp3,
+      :wav => Wav
+    }
 
     class Error < StandardError; end
     class UnknownFormat < Error; end
 
-    def initialize(filename)
-      @filename = Pathname.new(filename)
-      @ext = @filename.extname.sub(/^\./, '').downcase
+    def self.new_from_filename(filename)
+      ext = filename.extname.sub(/^\./, '').downcase
 
-      unless SUPPORTED_FORMATS.include?(@ext)
+      unless klass = SUPPORTED_FORMATS[ext.to_sym]
         raise UnknownFormat
       end
+
+      klass.new(filename)
     end
 
-    def length
-      case @ext
-      when 'mp3'
-        Mp3Info.new(@filename.to_s).length
-      when 'wav'
-        riff = Riff::Reader.open(@filename ,"r")
-        data = riff.root_chunk['data']
-        fmt = riff.root_chunk['fmt ']
-
-        data.length / fmt.body.unpack('s2i2')[3].to_f
-      end
-    end
-
-    def mono?
-      case @ext
-      when 'mp3'
-        Mp3Info.new(@filename.to_s).channel_mode == 'Single Channel'
-      when 'wav'
-        riff = Riff::Reader.open(@filename ,"r")
-        data = riff.root_chunk['data']
-        fmt = riff.root_chunk['fmt ']
-
-        fmt.body.unpack('s2')[1] == 1
-      end
+    def initialize(filename)
+      @filename = Pathname.new(filename)
     end
   end
 end

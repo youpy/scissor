@@ -17,7 +17,7 @@ module Scissor
         @fragments << Fragment.new(
           filename,
           0,
-          SoundFile.new(filename).length)
+          SoundFile.new_from_filename(filename).length)
       end
     end
 
