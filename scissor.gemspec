@@ -1,42 +1,26 @@
 # -*- encoding: utf-8 -*-
 
-Gem::Specification.new do |s|
-  s.name = %q{scissor}
-  s.version = "0.0.24"
+Gem::Specification.new do |gem|
+  gem.authors       = ["youpy"]
+  gem.email         = ["youpy@buycheapviagraonlinenow.com"]
+  gem.description   = %q{utility to chop sound files}
+  gem.summary       = %q{utility to chop sound files}
+  gem.homepage      = %q{http://github.com/youpy/scissor}
+  gem.homepage      = ""
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["youpy"]
-  s.date = %q{2010-04-28}
-  s.description = %q{utility to chop sound files}
-  s.email = %q{youpy@buycheapviagraonlinenow.com}
-  s.extra_rdoc_files = ["README.rdoc", "ChangeLog"]
-  s.files = ["README.rdoc", "ChangeLog", "Rakefile", "lib/scissor", "lib/scissor/chunk.rb", "lib/scissor/fragment.rb", "lib/scissor/loggable.rb", "lib/scissor/sequence.rb", "lib/scissor/sound_file.rb", "lib/scissor/writer.rb", "lib/scissor.rb", "data/silence.mp3"]
-  s.homepage = %q{http://github.com/youpy/scissor}
-  s.rdoc_options = ["--title", "scissor documentation", "--charset", "utf-8", "--opname", "index.html", "--line-numbers", "--main", "README.rdoc", "--inline-source", "--exclude", "^(examples|extras)/"]
-  s.require_paths = ["lib"]
-  s.rubyforge_project = %q{scissor}
-  s.rubygems_version = %q{1.3.6}
-  s.summary = %q{utility to chop sound files}
+  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  gem.name          = %q{scissor}
+  gem.require_paths = ["lib"]
+  gem.version       = "0.0.24"
 
-  if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<open4>, [">= 0"])
-      s.add_runtime_dependency(%q<ruby-mp3info>, [">= 0"])
-      s.add_runtime_dependency(%q<riff>, [">= 0"])
-      s.add_runtime_dependency(%q<tempdir>, [">= 0"])
-    else
-      s.add_dependency(%q<open4>, [">= 0"])
-      s.add_dependency(%q<ruby-mp3info>, [">= 0"])
-      s.add_dependency(%q<riff>, [">= 0"])
-      s.add_dependency(%q<tempdir>, [">= 0"])
-    end
-  else
-    s.add_dependency(%q<open4>, [">= 0"])
-    s.add_dependency(%q<ruby-mp3info>, [">= 0"])
-    s.add_dependency(%q<riff>, [">= 0"])
-    s.add_dependency(%q<tempdir>, [">= 0"])
-  end
+  gem.add_dependency('open4', '>= 1.3.0')
+  gem.add_dependency('ruby-mp3info')
+  gem.add_dependency('riff', '<= 0.3.0')
+  gem.add_dependency('tempdir')
+  gem.add_dependency('streamio-ffmpeg')
+  gem.add_development_dependency('rspec', ['~> 2.8.0'])
+  gem.add_development_dependency('rake')
+  gem.add_development_dependency('fakeweb')
 end
