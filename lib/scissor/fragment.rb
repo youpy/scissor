@@ -32,37 +32,29 @@ module Scissor
     end
 
     def create(remaining_start, remaining_length)
-      new_fragment = nil
-
       if remaining_start >= duration
-        remaining_start -= duration
-      else
-        if remaining_start + remaining_length >= duration
-          new_fragment = self.class.new(
-            filename,
-            start + remaining_start * pitch.to_f / 100,
-            (duration - remaining_start) * pitch.to_f / 100,
-            false,
-            pitch,
-            stretched?)
-
-          remaining_length -= duration - remaining_start
-          remaining_start = 0
-        else
-          new_fragment = self.class.new(
-            filename,
-            start + remaining_start * pitch.to_f / 100,
-            remaining_length * pitch.to_f / 100,
-            false,
-            pitch,
-            stretched?)
-
-          remaining_start = 0
-          remaining_length = 0
-        end
+        return [nil, remaining_start - duration, remaining_length]
       end
 
-      return new_fragment, remaining_start, remaining_length
+      have_remain_to_return = (remaining_start + remaining_length) >= duration
+
+      if have_remain_to_return
+        new_length = duration - remaining_start
+        remaining_length -= new_length
+      else
+        new_length = remaining_length
+        remaining_length = 0
+      end
+
+      new_fragment = self.class.new(
+        filename,
+        start + remaining_start * pitch.to_f / 100,
+        new_length * pitch.to_f / 100,
+        false,
+        pitch,
+        stretched?)
+
+      return [new_fragment, 0, remaining_length]
     end
   end
 end
