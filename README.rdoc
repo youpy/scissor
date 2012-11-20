@@ -79,6 +79,12 @@ supported file format:
 
  foo.stretch(200)
 
+=== pan
+
+ foo.pan(0)   # left only
+ foo.pan(50)  # center(default)
+ foo.pan(100) # right only
+
 === mix
 
  Scissor.mix([foo, bar], 'mix.mp3')
