@@ -170,14 +170,9 @@ module Scissor
       new_instance = self.class.new
 
       @fragments.reverse.each do |fragment|
-        new_instance.add_fragment(Fragment.new(
-            fragment.filename,
-            fragment.start,
-            fragment.original_duration,
-            !fragment.reversed?,
-            fragment.pitch,
-            fragment.stretched?,
-            fragment.pan))
+        new_instance.add_fragment(fragment.clone do |attributes|
+            attributes[:reverse] = !fragment.reversed?
+          end)
       end
 
       new_instance
@@ -187,14 +182,10 @@ module Scissor
       new_instance = self.class.new
 
       @fragments.each do |fragment|
-        new_instance.add_fragment(Fragment.new(
-            fragment.filename,
-            fragment.start,
-            fragment.original_duration,
-            fragment.reversed?,
-            fragment.pitch * (pitch.to_f / 100),
-            stretch,
-            fragment.pan))
+        new_instance.add_fragment(fragment.clone do |attributes|
+            attributes[:pitch]   = fragment.pitch * (pitch.to_f / 100)
+            attributes[:stretch] = stretch
+          end)
       end
 
       new_instance
@@ -209,14 +200,9 @@ module Scissor
       new_instance = self.class.new
 
       @fragments.each do |fragment|
-        new_instance.add_fragment(Fragment.new(
-            fragment.filename,
-            fragment.start,
-            fragment.original_duration,
-            fragment.reversed?,
-            fragment.pitch,
-            fragment.stretched?,
-            right_percent))
+        new_instance.add_fragment(fragment.clone do |attributes|
+            attributes[:pan] = right_percent
+          end)
       end
 
       new_instance

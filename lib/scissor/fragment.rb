@@ -47,16 +47,41 @@ module Scissor
         remaining_length = 0
       end
 
-      new_fragment = self.class.new(
-        filename,
-        start + remaining_start * pitch.to_f / 100,
-        new_length * pitch.to_f / 100,
-        false,
-        pitch,
-        stretched?,
-        pan)
+      new_fragment = clone do |attributes|
+        attributes.update(
+          :start    =>  start + remaining_start * pitch.to_f / 100,
+          :duration =>  new_length * pitch.to_f / 100,
+          :reverse  => false
+          )
+      end
 
       return [new_fragment, 0, remaining_length]
+    end
+
+    def clone(&block)
+      attributes = {
+        :filename => filename,
+        :start    => start,
+        :duration => original_duration,
+        :reverse  => reversed?,
+        :pitch    => pitch,
+        :stretch  => stretched?,
+        :pan      => pan
+      }
+
+      if block_given?
+        block.call(attributes)
+      end
+
+      self.class.new(
+        attributes[:filename],
+        attributes[:start],
+        attributes[:duration],
+        attributes[:reverse],
+        attributes[:pitch],
+        attributes[:stretch],
+        attributes[:pan]
+      )
     end
   end
 end
