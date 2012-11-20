@@ -176,7 +176,8 @@ module Scissor
             fragment.original_duration,
             !fragment.reversed?,
             fragment.pitch,
-            fragment.stretched?))
+            fragment.stretched?,
+            fragment.pan))
       end
 
       new_instance
@@ -192,7 +193,8 @@ module Scissor
             fragment.original_duration,
             fragment.reversed?,
             fragment.pitch * (pitch.to_f / 100),
-            stretch))
+            stretch,
+            fragment.pan))
       end
 
       new_instance
@@ -201,6 +203,23 @@ module Scissor
     def stretch(factor)
       factor_for_pitch = 1 / (factor.to_f / 100) * 100
       pitch(factor_for_pitch, true)
+    end
+
+    def pan(right_percent)
+      new_instance = self.class.new
+
+      @fragments.each do |fragment|
+        new_instance.add_fragment(Fragment.new(
+            fragment.filename,
+            fragment.start,
+            fragment.original_duration,
+            fragment.reversed?,
+            fragment.pitch,
+            fragment.stretched?,
+            right_percent))
+      end
+
+      new_instance
     end
 
     def to_file(filename, options = {})

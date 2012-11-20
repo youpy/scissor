@@ -37,6 +37,12 @@ describe Scissor::Fragment do
     fragment.duration.should eql(21.0)
   end
 
+  it "should have a pan" do
+    fragment = Scissor::Fragment.new(fixture('sample.mp3'), 5, 10.5, false, 50, false, 10)
+
+    fragment.pan.should eql(10)
+  end
+
   it "should return new fragment and remaining start point and length" do
     new_fragment, remaining_start, remaining_length = @fragment.create(0.5, 1.0)
     new_fragment.filename.should eql(fixture('sample.mp3'))

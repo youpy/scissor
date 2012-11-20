@@ -2,15 +2,16 @@ require 'pathname'
 
 module Scissor
   class Fragment
-    attr_reader :filename, :start, :pitch
+    attr_reader :filename, :start, :pitch, :pan
 
-    def initialize(filename, start, duration, reverse = false, pitch = 100, stretch = false)
+    def initialize(filename, start, duration, reverse = false, pitch = 100, stretch = false, pan = 50)
       @filename = Pathname.new(filename).realpath
       @start = start
       @duration = duration
       @reverse = reverse
       @pitch = pitch
       @is_stretched = stretch
+      @pan = pan
 
       freeze
     end
@@ -52,7 +53,8 @@ module Scissor
         new_length * pitch.to_f / 100,
         false,
         pitch,
-        stretched?)
+        stretched?,
+        pan)
 
       return [new_fragment, 0, remaining_length]
     end

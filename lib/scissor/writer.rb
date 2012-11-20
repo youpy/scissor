@@ -49,6 +49,10 @@ module Scissor
 
         cmd << "-a:#{index} -o:#{outfile} -y:#{position}#{is_mono[fragment_filename] ? ' -chcopy:1,2' : ''}"
 
+        if fragment.pan != 50
+          cmd << "-epp:%i" % fragment.pan
+        end
+
         if fragment.stretched? && fragment.pitch.to_f != 100.0
           rubberband_out = tmpdir + (Digest::MD5.hexdigest(fragment_filename.to_s) + "rubberband_#{index}.wav")
           rubberband_temp = tmpdir + "_rubberband.wav"

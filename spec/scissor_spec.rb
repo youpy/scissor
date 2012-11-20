@@ -212,6 +212,13 @@ describe Scissor do
     scissor.fragments.first.should be_stretched
   end
 
+  it "should pan" do
+    scissor = @mp3.slice(0, 10) + @mp3.slice(0, 5)
+
+    scissor.pan(10).fragments[0].pan.should eql(10)
+    scissor.pan(10).pan(10).fragments[0].pan.should eql(10)
+  end
+
   it "should join instances of scissor" do
     a = @mp3.slice(0, 120)
     b = @mp3.slice(150, 20)
