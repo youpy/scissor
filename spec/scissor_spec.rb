@@ -270,6 +270,12 @@ describe Scissor do
     result.duration.should be_within(0.1).of(140)
   end
 
+  it "should write to m4a file" do
+    scissor = @mp3.slice(0, 120) + @mp3.slice(150, 20)
+    result = scissor.to_file('/tmp/scissor-test/out.m4a')
+    result.duration.should be_within(0.1).of(140)
+  end
+
   it "should write to file using 'greater than' operator" do
     result = @mp3.slice(0, 120) + @mp3.slice(150, 20) > '/tmp/scissor-test/out.wav'
     result.duration.should be_within(0.1).of(140)

@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency('open4', '>= 1.3.0')
   gem.add_dependency('ruby-mp3info')
+  gem.add_dependency('mp4info', '1.7.3')
   gem.add_dependency('riff', '<= 0.3.0')
   gem.add_dependency('tempdir')
   gem.add_dependency('streamio-ffmpeg')

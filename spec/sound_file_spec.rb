@@ -9,6 +9,7 @@ describe Scissor::SoundFile do
   before do
     @mp3 = Scissor::SoundFile.new_from_filename(fixture('sample.mp3'))
     @wav = Scissor::SoundFile.new_from_filename(fixture('sine.wav'))
+    @m4a = Scissor::SoundFile.new_from_filename(fixture('sine.m4a'))
   end
 
   after do
@@ -23,12 +24,14 @@ describe Scissor::SoundFile do
   it "should get length" do
     @mp3.length.should be_within(0.1).of(178.1)
     @wav.length.should eql(1.0)
+    @m4a.length.should be_within(0.1).of(1.0)
   end
 
   describe '#mono?' do
     it "should return true if sound file is mono" do
       @mp3.should be_mono
       @wav.should_not be_mono
+      @m4a.should_not be_mono
 
       Scissor::SoundFile.new_from_filename(fixture('mono.wav')).should be_mono
     end
