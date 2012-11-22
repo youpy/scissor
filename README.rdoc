@@ -8,6 +8,7 @@ supported file format:
 
 * mp3
 * wav
+* m4a
 
 == Installation
 
