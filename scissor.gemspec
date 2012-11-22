@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = %q{scissor}
   gem.require_paths = ["lib"]
-  gem.version       = "0.4.0"
+  gem.version       = "0.5.0"
 
   gem.add_dependency('open4', '>= 1.3.0')
   gem.add_dependency('ruby-mp3info')
