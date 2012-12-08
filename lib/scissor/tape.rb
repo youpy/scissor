@@ -5,7 +5,6 @@ module Scissor
   class Tape
     class Error < StandardError; end
     class EmptyFragment < Error; end
-    class OutOfDuration < Error; end
 
     attr_reader :fragments
 
@@ -152,16 +151,17 @@ module Scissor
       new_instance = self.class.new
       offset = start + length
 
-      if offset > duration
-        raise OutOfDuration
-      end
+      new_instance += slice(0, start)
 
-      if start > 0
-        new_instance += slice(0, start)
+      if new_instance.duration < start
+        new_instance + Scissor.silence(start - new_instance.duration)
       end
 
       new_instance += replaced
-      new_instance += slice(offset, duration - offset)
+
+      if duration > offset
+        new_instance += slice(offset, duration - offset)
+      end
 
       new_instance
     end

@@ -238,10 +238,9 @@ describe Scissor do
     scissor.fragments.size.should eql(1)
   end
 
-  it "should raise error if replaced range is out of duration" do
-    lambda {
-      @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))
-    }.should raise_error(Scissor::Tape::OutOfDuration)
+  it "should expand if replaced range is out of duration" do
+    replaced = @mp3.slice(0, 100).replace(60, 41, @mp3.slice(0, 60))
+    replaced.duration.should eql(120.0)
   end
 
   it "should write to file and return new instance of Scissor" do
