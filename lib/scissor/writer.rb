@@ -83,7 +83,7 @@ module Scissor
       cmd = %w/ecasound/
 
       filenames.each_with_index do |tf, index|
-        cmd << "-a:#{index} -i:#{tf}"
+        cmd << "-a:#{index} -i:#{tf} -eaw:#{100/filenames.size}"
       end
 
       cmd << "-a:all -o:#{outfile}"
