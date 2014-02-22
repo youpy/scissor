@@ -79,11 +79,12 @@ module Scissor
       run_command(cmd.join(' '))
     end
 
-    def mix_files(filenames, outfile)
+    def mix_files(filenames, outfile, amplify = nil)
       cmd = %w/ecasound/
+      amplify ||= 100
 
       filenames.each_with_index do |tf, index|
-        cmd << "-a:#{index} -i:#{tf} -eaw:#{100/filenames.size}"
+        cmd << "-a:#{index} -i:#{tf} -eaw:#{amplify}"
       end
 
       cmd << "-a:all -o:#{outfile}"
@@ -121,7 +122,7 @@ module Scissor
           join_fragments(fragments, tmpfile, tmpdir)
         end
 
-        mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav')
+        mix_files(tmpfiles, final_tmpfile = tmpdir + 'tmp.wav', options[:amplify])
 
         movie = FFMPEG::Movie.new(final_tmpfile.to_s)
         movie.transcode(full_filename.to_s, :audio_sample_rate => 44100, :audio_bitrate => options[:bitrate])
